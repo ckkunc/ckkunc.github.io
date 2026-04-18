@@ -62,3 +62,18 @@ export const experiences = [
   },
 ];
 
+
+export const posts = [
+  {
+    slug: "on-building-things",
+    title: "On Building Things",
+    date: "2026-03-10",
+    content: `<p>This is a placeholder for your first blog post. Edit this in <code>content.ts</code> under the <code>posts</code> array.</p><p>Each post has a slug (used in the URL), a title, a date, and HTML content.</p>`,
+  },
+  {
+    slug: "distributed-systems-notes",
+    title: "Distributed Systems Notes",
+    date: "2025-11-04",
+    content: `<p>This is a placeholder for your second blog post. Replace this content with your own writing.</p>`,
+  },
+];
