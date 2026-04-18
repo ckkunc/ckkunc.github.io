@@ -2,7 +2,7 @@ import ExperienceSection from "@/components/ExperienceSection";
 import { name, about, writing, contact } from "@/content";
 
 function HoverLi({ html, children }: { html?: string; children?: React.ReactNode }) {
-  const base = "transition-all duration-150 ease-out rounded px-1.5 -mx-1.5 py-0.5 hover:bg-black/[0.05] hover:text-[1.03em] cursor-default list-item";
+  const base = "transition-all duration-150 ease-out rounded px-1.5 -mx-1.5 py-0.5 hover:bg-black/[0.05] hover:scale-[1.03] origin-left cursor-default list-item";
   if (html) {
     return <li className={base} dangerouslySetInnerHTML={{ __html: html }} />;
   }
