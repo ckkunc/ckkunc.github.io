@@ -44,9 +44,9 @@
   --accent: 40 20% 88%;
   --accent-foreground: 25 15% 15%;
 
-  --app-font-sans: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
-  --app-font-serif: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
-  --app-font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  --app-font-sans: 'Times New Roman', Times, serif;
+  --app-font-serif: 'Times New Roman', Times, serif;
+  --app-font-mono: 'Courier New', monospace;
   --radius: 0.25rem;
 }
 

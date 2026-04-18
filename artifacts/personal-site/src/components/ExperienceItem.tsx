@@ -27,7 +27,7 @@ export default function ExperienceItem({
       <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="no-underline flex-shrink-0 mt-0.5">
         <CompanyLogo company={company} bgColor={bgColor} />
       </a>
-      <div className="flex-1 min-w-0 transition-all duration-150 group-hover:text-[1.03em]">
+      <div className="flex-1 min-w-0 transition-transform duration-150 origin-left group-hover:scale-[1.03]">
         <p className="font-bold text-sm leading-tight">{title}</p>
         <a
           href={companyUrl}
