@@ -26,7 +26,7 @@ export const experiences = [
     duration: "May 2026 - Aug 2026",
     description: "Delta Sharing",
     companyUrl: "https://databricks.com",
-    bgColor: "#E84D37",
+    bgColor: "#7A2518",
   },
   {
     title: "Machine Learning Engineer",
@@ -34,7 +34,7 @@ export const experiences = [
     duration: "Nov 2025 - Jan 2026",
     description: "Agentic machine learning trajectories",
     companyUrl: "https://mercor.com",
-    bgColor: "#6366F1",
+    bgColor: "#3A3C8A",
   },
   {
     title: "Software Development Engineer Intern",
@@ -42,7 +42,7 @@ export const experiences = [
     duration: "May 2025 - Aug 2025",
     description: "Agentic analysis with RAG",
     companyUrl: "https://amazon.com",
-    bgColor: "#FF9900",
+    bgColor: "#7A5000",
   },
   {
     title: "Undergraduate Research Assistant",
@@ -50,7 +50,7 @@ export const experiences = [
     duration: "Feb 2025 - May 2025",
     description: "Sentiment classification",
     companyUrl: "https://unc.edu",
-    bgColor: "#4B9CD3",
+    bgColor: "#1E5070",
   },
   {
     title: "Software Engineer Intern",
@@ -58,7 +58,7 @@ export const experiences = [
     duration: "Jun 2024 - Aug 2024",
     description: "Internal tooling",
     companyUrl: "https://fidelity.com",
-    bgColor: "#4CAF50",
+    bgColor: "#1E5C21",
   },
 ];
 

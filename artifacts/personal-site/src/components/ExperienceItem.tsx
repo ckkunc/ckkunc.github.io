@@ -25,7 +25,7 @@ export default function ExperienceItem({
   return (
     <div className={`group flex gap-4 py-4 px-2 -mx-2 rounded-md transition-all duration-150 cursor-default ${!isLast ? "border-b border-border" : ""} hover:bg-black/[0.05] hover:border-transparent`}>
       <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="no-underline flex-shrink-0 mt-0.5">
-        <CompanyLogo company={company} bgColor={bgColor} />
+        <CompanyLogo bgColor={bgColor} />
       </a>
       <div className="flex-1 min-w-0 transition-transform duration-150 origin-left group-hover:scale-[1.03]">
         <p className="font-bold text-sm leading-tight">{title}</p>
