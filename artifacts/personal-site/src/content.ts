@@ -68,6 +68,16 @@ export const posts = [
     slug: "on-building-things",
     title: "On Building Things",
     date: "2026-03-10",
-    content: `<p>This is a placeholder for your first blog post. Edit this in <code>content.ts</code> under the <code>posts</code> array.</p><p>Each post has a slug (used in the URL), a title, a date, and HTML content.</p>`,
+    content: `This is a placeholder post. Paste your Markdown here — copied straight from Notion or written by hand.
+
+## A section heading
+
+Paragraphs, **bold**, *italic*, and [links](https://example.com) all work.
+
+- Bullet lists work too
+- Just like in Notion
+
+> Blockquotes render nicely as well.
+`,
   },
 ];
