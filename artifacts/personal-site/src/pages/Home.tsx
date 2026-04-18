@@ -1,5 +1,13 @@
 import ExperienceSection from "@/components/ExperienceSection";
-import { name, about, writing, contact, footer as footerText } from "@/content";
+import { name, about, writing, contact } from "@/content";
+
+function HoverLi({ html, children }: { html?: string; children?: React.ReactNode }) {
+  const base = "transition-all duration-150 ease-out rounded px-1.5 -mx-1.5 py-0.5 hover:bg-black/[0.05] hover:text-[1.03em] cursor-default list-item";
+  if (html) {
+    return <li className={base} dangerouslySetInnerHTML={{ __html: html }} />;
+  }
+  return <li className={base}>{children}</li>;
+}
 
 export default function Home() {
   return (
@@ -9,9 +17,9 @@ export default function Home() {
 
         <section className="mb-6">
           <p className="mb-2">Some things about me:</p>
-          <ul className="list-disc list-inside space-y-1 ml-1">
+          <ul className="list-disc list-inside space-y-0.5 ml-1">
             {about.map((item, i) => (
-              <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+              <HoverLi key={i} html={item} />
             ))}
           </ul>
         </section>
@@ -19,13 +27,13 @@ export default function Home() {
         {writing.length > 0 && (
           <section className="mb-6">
             <p className="mb-2">Some things I wrote:</p>
-            <ul className="list-disc list-inside space-y-1 ml-1">
+            <ul className="list-disc list-inside space-y-0.5 ml-1">
               {writing.map((item, i) => (
-                <li key={i}>
+                <HoverLi key={i}>
                   <a href={item.url} target="_blank" rel="noopener noreferrer">
                     {item.label}
                   </a>
-                </li>
+                </HoverLi>
               ))}
             </ul>
           </section>
@@ -38,19 +46,15 @@ export default function Home() {
         <p className="mb-2">
           Some places to <span className="underline">find</span> me:
         </p>
-        <ul className="list-disc list-inside space-y-1 ml-1">
+        <ul className="list-disc list-inside space-y-0.5 ml-1">
           {contact.map((item, i) => (
-            <li key={i}>
+            <HoverLi key={i}>
               {item.label}:{" "}
               <a href={item.url}>{item.text}</a>
-            </li>
+            </HoverLi>
           ))}
         </ul>
       </section>
-
-      <footer className="mt-12 pt-6 border-t border-border">
-        {footerText && <p className="text-right text-sm text-muted-foreground italic">{footerText}</p>}
-      </footer>
     </div>
   );
 }
