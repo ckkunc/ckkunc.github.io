@@ -42,7 +42,7 @@ export const experiences = [
     duration: "May 2025 - Aug 2025",
     description: "Agentic analysis with RAG",
     companyUrl: "https://amazon.com",
-    bgColor: "#7A5000",
+    bgColor: "#B84D00",
   },
   {
     title: "Undergraduate Research Assistant",
