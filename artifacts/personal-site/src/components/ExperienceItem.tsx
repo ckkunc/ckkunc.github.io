@@ -23,11 +23,11 @@ export default function ExperienceItem({
   isLast,
 }: ExperienceItemProps) {
   return (
-    <div className={`flex gap-4 py-4 px-2 -mx-2 rounded-md transition-colors duration-150 cursor-default ${!isLast ? "border-b border-border" : ""} hover:bg-black/[0.05] hover:border-transparent`}>
+    <div className={`group flex gap-4 py-4 px-2 -mx-2 rounded-md transition-all duration-150 cursor-default ${!isLast ? "border-b border-border" : ""} hover:bg-black/[0.05] hover:border-transparent`}>
       <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="no-underline flex-shrink-0 mt-0.5">
         <CompanyLogo company={company} bgColor={bgColor} />
       </a>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 transition-all duration-150 group-hover:text-[1.03em]">
         <p className="font-bold text-sm leading-tight">{title}</p>
         <a
           href={companyUrl}
