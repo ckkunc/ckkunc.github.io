@@ -16,7 +16,6 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-4">{name}</h1>
 
         <section className="mb-6">
-          <p className="mb-2">Some things about me:</p>
           <ul className="list-disc list-inside space-y-0.5 ml-1">
             {about.map((item, i) => (
               <HoverLi key={i} html={item} />
