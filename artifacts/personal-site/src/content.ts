@@ -24,7 +24,7 @@ export const experiences = [
     title: "Software Engineer Intern",
     company: "Databricks",
     duration: "May 2026 - Aug 2026",
-    description: "Delta Sharing",
+    description: "<a href='https://www.databricks.com/product/delta-sharing' target='_blank' rel='noopener noreferrer'>Delta Sharing</a>",
     companyUrl: "https://databricks.com",
     bgColor: "#E84D37",
   },

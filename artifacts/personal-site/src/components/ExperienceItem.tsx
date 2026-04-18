@@ -39,7 +39,7 @@ export default function ExperienceItem({
         </a>
         <p className="text-xs text-muted-foreground mt-0.5">{duration.split(" · ")[0]}</p>
         {description && (
-          <p className="text-sm mt-2">{description}</p>
+          <p className="text-sm mt-2" dangerouslySetInnerHTML={{ __html: description }} />
         )}
       </div>
     </div>
