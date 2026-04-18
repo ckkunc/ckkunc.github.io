@@ -7,7 +7,6 @@ interface ExperienceItemProps {
   location: string;
   description: string;
   skills: string[];
-  logoSvg?: React.ReactNode;
   companyUrl: string;
   bgColor: string;
   isLast: boolean;
@@ -19,8 +18,6 @@ export default function ExperienceItem({
   duration,
   location,
   description,
-  skills,
-  logoSvg,
   companyUrl,
   bgColor,
   isLast,
@@ -28,7 +25,7 @@ export default function ExperienceItem({
   return (
     <div className={`flex gap-4 py-4 ${!isLast ? "border-b border-border" : ""}`}>
       <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="no-underline flex-shrink-0 mt-0.5">
-        <CompanyLogo company={company} bgColor={bgColor} logoSvg={logoSvg} />
+        <CompanyLogo company={company} bgColor={bgColor} />
       </a>
       <div className="flex-1 min-w-0">
         <p className="font-bold text-sm leading-tight">{title}</p>
@@ -40,15 +37,9 @@ export default function ExperienceItem({
         >
           {company}
         </a>
-        <p className="text-xs text-muted-foreground mt-0.5">{duration}</p>
-        <p className="text-xs text-muted-foreground">{location}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{duration.split(" · ")[0]}</p>
         {description && (
           <p className="text-sm mt-2">{description}</p>
-        )}
-        {skills.length > 0 && (
-          <p className="text-xs text-muted-foreground mt-1">
-            Skills: {skills.join(", ")}
-          </p>
         )}
       </div>
     </div>
