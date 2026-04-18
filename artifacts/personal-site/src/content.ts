@@ -3,7 +3,7 @@ export const name = "Chris Kim";
 export const about = [
   "Studying computer science at <a href='https://unc.edu'>University of North Carolina at Chapel Hill</a>",
   "Software Engineer Intern at <a href='https://databricks.com'>Databricks</a> (<a href='https://www.databricks.com/product/delta-sharing' target='_blank' rel='noopener noreferrer'>Delta Sharing</a>)",
-  "Interested in  AI/ML, high-performant backend architectures, and large-scale distributed systems.",
+  "Interested in  AI/ML, high-performant backend architectures, and large-scale distributed systems",
 ];
 
 export const writing = [
