@@ -1,10 +1,9 @@
 export const name = "Chris Kim";
 
 export const about = [
-  "Studying computer science at <a href='https://umich.edu'>University of Michigan</a>",
+  "Studying computer science at <a href='https://unc.edu'>University of North Carolina at Chapel Hill</a>",
   "Software Engineer Intern at <a href='https://databricks.com'>Databricks</a> (Delta Sharing)",
-  "Interested in distributed systems, ai/ml, and quantitative finance",
-  "Obsessed with philosophy (<a href='https://en.wikipedia.org/wiki/Philosophy_of_mind'>mind and machines</a>)",
+  "Interested in  AI/ML, high-performant backend architectures, and large-scale distributed systems.",
 ];
 
 export const writing = [
@@ -12,16 +11,19 @@ export const writing = [
 ];
 
 export const contact = [
-  { label: "Email", text: "chris [at] umich [dot] edu", url: "mailto:chris@umich.edu" },
-  { label: "Github", text: "@chrisk", url: "https://github.com/chrisk" },
-  { label: "LinkedIn", text: "@chrisk", url: "https://linkedin.com/in/chrisk" },
+  {
+    label: "Email",
+    text: "chriskkim2025 [at] gmail [dot] com",
+    url: "mailto:chriskkim2025@gmail.com",
+  },
+  { label: "LinkedIn", text: "@chris-kim-unc", url: "https://www.linkedin.com/in/chris-kim-unc/" },
 ];
 
 export const experiences = [
   {
     title: "Software Engineer Intern",
     company: "Databricks",
-    duration: "Apr 2026 - Present",
+    duration: "May 2026 - Aug 2026",
     description: "Delta Sharing",
     companyUrl: "https://databricks.com",
     bgColor: "#E84D37",

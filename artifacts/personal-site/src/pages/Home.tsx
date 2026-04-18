@@ -1,9 +1,9 @@
 import ExperienceSection from "@/components/ExperienceSection";
-import { name, about, writing, contact, footer } from "@/content";
+import { name, about, writing, contact, footer as footerText } from "@/content";
 
 export default function Home() {
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-2xl px-8 py-10">
       <header className="mb-8">
         <h1 className="text-2xl font-bold mb-4">{name}</h1>
 
@@ -49,7 +49,7 @@ export default function Home() {
       </section>
 
       <footer className="mt-12 pt-6 border-t border-border">
-        <p className="text-right text-sm text-muted-foreground italic">{footer}</p>
+        {footerText && <p className="text-right text-sm text-muted-foreground italic">{footerText}</p>}
       </footer>
     </div>
   );
