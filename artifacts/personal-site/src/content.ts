@@ -62,4 +62,3 @@ export const experiences = [
   },
 ];
 
-export const footer = "कृण्वन्तो विश्वमार्यम् | Make the world noble";

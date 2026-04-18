@@ -44,7 +44,7 @@ export default function Home() {
 
       <section className="mt-8 mb-6">
         <p className="mb-2">
-          Some places to <span className="underline">find</span> me:
+          Contact me:
         </p>
         <ul className="list-disc list-inside space-y-0.5 ml-1">
           {contact.map((item, i) => (
