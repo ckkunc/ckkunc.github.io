@@ -38,7 +38,7 @@ jobs:
       - name: Build
         env:
           PORT: "3000"
-          BASE_PATH: /personal-website/
+          BASE_PATH: /
         run: pnpm --filter @workspace/personal-site run build
 
       - name: Copy index.html to 404.html for SPA routing
