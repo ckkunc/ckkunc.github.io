@@ -13,7 +13,7 @@ function HoverLi({ html, children }: { html?: string; children?: React.ReactNode
 export default function Home() {
   return (
     <div className="flex px-8 py-10 gap-16">
-      <div className="w-[600px] flex-shrink-0">
+      <div className="w-[720px] flex-shrink-0">
         <header className="mb-8">
           <h1 className="text-2xl font-bold mb-4">{name}</h1>
 
