@@ -38,9 +38,7 @@ jobs:
       - name: Build
         env:
           PORT: "3000"
-          # If deploying to username.github.io, keep BASE_PATH as /
-          # If deploying to username.github.io/repo-name, change to /repo-name/
-          BASE_PATH: /
+          BASE_PATH: /personal-website/
         run: pnpm --filter @workspace/personal-site run build
 
       - name: Copy index.html to 404.html for SPA routing
