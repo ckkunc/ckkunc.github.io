@@ -37,6 +37,7 @@ jobs:
 
       - name: Build
         env:
+          NODE_ENV: production
           PORT: "3000"
           BASE_PATH: /
         run: pnpm --filter @workspace/personal-site run build
