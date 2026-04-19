@@ -49,7 +49,7 @@ export default function Home() {
             {contact.map((item, i) => (
               <HoverLi key={i}>
                 {item.label}:{" "}
-                <a href={item.url}>{item.text}</a>
+                <a href={item.url} className="no-underline">{item.text}</a>
               </HoverLi>
             ))}
           </ul>
