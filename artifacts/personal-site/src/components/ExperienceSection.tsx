@@ -15,15 +15,18 @@ export default function ExperienceSection() {
               style={{ backgroundColor: exp.bgColor }}
             />
             <span className="text-sm">
-              <span className="font-semibold">{exp.title}</span>
-              {" · "}
-              <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="no-underline hover:underline">
+              <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold no-underline hover:underline">
                 {exp.company}
               </a>
               {" · "}
+              <span>{exp.title}</span>
+              {" · "}
               <span className="text-muted-foreground">{exp.duration}</span>
               {exp.description && (
-                <> · <span className="text-muted-foreground">{exp.description}</span></>
+                <span className="flex items-center gap-1.5 text-muted-foreground text-xs mt-0.5">
+                  <span className="w-1 h-1 rounded-full bg-muted-foreground/50 flex-shrink-0" />
+                  {exp.description}
+                </span>
               )}
             </span>
           </li>
