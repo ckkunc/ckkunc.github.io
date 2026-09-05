@@ -1,75 +1,116 @@
-export const name = "Chris Kim";
+export type PortfolioTrack = {
+  company: string;
+  role: string;
+  dates: string;
+  location: string;
+  subtitle: string;
+  color: string;
+  bullets: string[];
+  tags: string[];
+};
+
+export const name = "Christopher Kim";
 
 export const about = [
-  "Studying computer science at <a href='https://unc.edu'>University of North Carolina at Chapel Hill</a>",
-  "Software Engineer Intern at <a href='https://databricks.com'>Databricks</a> (<a href='https://www.databricks.com/product/delta-sharing' target='_blank' rel='noopener noreferrer'>Delta Sharing</a>)",
-  "Interested in  AI/ML, high-performant backend architectures, and large-scale distributed systems",
+  "Computer Science at the University of North Carolina at Chapel Hill",
+  "Software engineer focused on distributed systems, AI/ML, and backend infrastructure",
 ];
 
-export const writing = [
-  // { label: "What I Value in Life", url: "https://example.com" },
-];
+export const writing: Array<{ label: string; url: string }> = [];
 
 export const contact = [
   {
     label: "Email",
-    text: "chriskkim2025 [at] gmail [dot] com",
+    text: "chriskkim2025@gmail.com",
     url: "mailto:chriskkim2025@gmail.com",
   },
-  { label: "LinkedIn", text: "@chris-kim-unc", url: "https://www.linkedin.com/in/chris-kim-unc/" },
+  {
+    label: "LinkedIn",
+    text: "chris-kim-unc",
+    url: "https://www.linkedin.com/in/chris-kim-unc/",
+  },
+  {
+    label: "GitHub",
+    text: "ckkunc",
+    url: "https://github.com/ckkunc",
+  },
 ];
 
-export const experiences = [
+export const portfolioTracks: PortfolioTrack[] = [
   {
-    title: "Software Engineer Intern",
     company: "Databricks",
-    duration: "2026",
-    description: "Delta Sharing",
-    companyUrl: "https://databricks.com",
-    bgColor: "#FF3621",
+    role: "Software Engineer Intern",
+    dates: "May 2026 - August 2026",
+    location: "Mountain View, CA",
+    subtitle: "Delta Sharing / OpenSharing",
+    color: "#f36b3f",
+    bullets: [
+      "Developed support for sharing shallow-cloned Delta tables through OpenSharing without duplicating the underlying data.",
+      "Built selective credential-vending and authorization workflows through Unity Catalog's dependency-authorization framework.",
+      "Designed backend APIs for metadata resolution, access validation, and credential issuance across S3, Azure, and GCS.",
+      "Implemented fail-closed, multi-root security controls to prevent cross-table data access.",
+      "Rolled the feature out to four private-preview partners, avoiding more than 25 TB of duplicate storage.",
+    ],
+    tags: ["Distributed systems", "Cloud storage", "Security", "APIs"],
   },
   {
-    title: "Machine Learning Engineer",
     company: "Mercor",
-    duration: "2025",
-    description: "Agentic machine learning trajectories",
-    companyUrl: "https://mercor.com",
-    bgColor: "#6366F1",
+    role: "Machine Learning Engineer",
+    dates: "November 2025 - January 2026",
+    location: "Remote",
+    subtitle: "Agentic ML trajectories",
+    color: "#9b86ff",
+    bullets: [
+      "Built an end-to-end ingestion and quality-control application for SFT trajectory data used to improve Meta's Code World Model.",
+      "Combined deterministic validation gates with multi-criteria LLM-as-judge scoring for reasoning, correctness, and instruction adherence.",
+      "Automated triage for more than 1,000 trajectories, reducing manual review by 42% while improving acceptance consistency.",
+    ],
+    tags: ["Machine learning", "LLM evaluation", "Data pipelines", "Python"],
   },
   {
-    title: "Software Development Engineer Intern",
     company: "Amazon",
-    duration: "2025",
-    description: "Agentic analysis with RAG",
-    companyUrl: "https://amazon.com",
-    bgColor: "#FF9900",
+    role: "Software Development Engineer Intern",
+    dates: "May 2025 - August 2025",
+    location: "Bellevue, WA",
+    subtitle: "Agentic incident analysis",
+    color: "#f6b436",
+    bullets: [
+      "Developed an AI-powered platform that automated error-log analysis using LLM agents and a knowledge base.",
+      "Centralized service logs in a unified AWS CloudWatch monitoring account to establish reliable automated analysis.",
+      "Engineered a multi-agent AWS Bedrock and RAG pipeline for context-aware incident diagnosis from runbooks and documentation.",
+      "Operationalized the workflow with Python and AWS Lambda, helping engineers resolve incidents 2.5x faster.",
+    ],
+    tags: ["AWS Bedrock", "RAG", "Lambda", "CloudWatch"],
   },
   {
-    title: "Software Engineer Intern",
     company: "Fidelity Investments",
-    duration: "2024",
-    description: "Internal tooling",
-    companyUrl: "https://fidelity.com",
-    bgColor: "#00A650",
+    role: "Software Engineer Intern",
+    dates: "June 2024 - August 2024",
+    location: "Durham, NC",
+    subtitle: "Associate decision tools",
+    color: "#48ad7b",
+    bullets: [
+      "Created an internal account-analysis experience that cut customer response time by 30%.",
+      "Developed responsive Angular and RxJS interfaces that surfaced the right customer information at the right moment.",
+      "Engineered a NestJS and GraphQL backend for real-time personalized recommendations.",
+    ],
+    tags: ["Angular", "RxJS", "NestJS", "GraphQL"],
   },
 ];
 
+// Kept for the older archived components in this project.
+export const experiences = portfolioTracks.map((track) => ({
+  title: track.role,
+  company: track.company,
+  duration: track.dates,
+  description: track.subtitle,
+  companyUrl: "#experience",
+  bgColor: track.color,
+}));
 
-export const posts = [
-  {
-    slug: "on-building-things",
-    title: "On Building Things",
-    date: "2026-03-10",
-    content: `This is a placeholder post. Paste your Markdown here — copied straight from Notion or written by hand.
-
-## A section heading
-
-Paragraphs, **bold**, *italic*, and [links](https://example.com) all work.
-
-- Bullet lists work too
-- Just like in Notion
-
-> Blockquotes render nicely as well.
-`,
-  },
-];
+export const posts: Array<{
+  slug: string;
+  title: string;
+  date: string;
+  content: string;
+}> = [];
