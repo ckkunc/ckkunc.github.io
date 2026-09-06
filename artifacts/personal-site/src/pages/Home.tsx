@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, ChevronsLeft, ChevronsRight, Pause, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronsLeft, ChevronsRight, Pause, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { portfolioTracks } from "@/content";
 import { nextTape, wheelPixels } from "@/lib/player";
@@ -11,6 +11,12 @@ const editions = [
   { label: "Mercor", color: "#5a4afc", ink: "#ffffff", logoFilter: "brightness(0) invert(1)" },
   { label: "Amazon", color: "#ff9900", ink: "#171b1e", logoFilter: "brightness(0)" },
   { label: "Fidelity", color: "#087b32", ink: "#ffffff", logoFilter: "none" },
+];
+const stories = [
+  "At Databricks, I worked on sharing data without making copies of it. I built secure access to shallow-cloned Delta tables across S3, Azure, and GCS. The feature reached four private-preview partners and avoided more than 25 TB of duplicate storage.",
+  "At Mercor, I built the pipeline that checked and prepared coding trajectories for Meta’s Code World Model. Combining automated validation with model-based evaluation helped the team review over 1,000 trajectories with 42% less manual work.",
+  "At Amazon, I built an AI-powered system to help engineers understand incidents. It connected service logs with runbooks and documentation, using AWS Bedrock agents to help engineers find the problem and resolve incidents 2.5 times faster.",
+  "At Fidelity, I built tools that helped financial associates understand customer accounts at a glance. Responsive interfaces and real-time recommendations made conversations easier and cut customer response time by 30%.",
 ];
 
 function Tape({ index, playing }: { index: number; playing: boolean }) {
@@ -48,7 +54,9 @@ export default function Home() {
   const [direction, setDirection] = useState(1);
   const [playing, setPlaying] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [storyOpen, setStoryOpen] = useState(false);
   const aboutTrigger = useRef<HTMLButtonElement>(null);
+  const storyTrigger = useRef<HTMLButtonElement | null>(null);
   const roomRef = useRef<HTMLElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
   const choose = useCallback((next: number) => { setDirection(next >= index ? 1 : -1); setIndex(next); }, [index]);
@@ -56,19 +64,19 @@ export default function Home() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (aboutOpen || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (aboutOpen || storyOpen || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       const target = event.target as HTMLElement;
       if (target.closest("input, textarea, select, [contenteditable=true], [role=dialog]")) return;
       if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) { event.preventDefault(); if (!event.repeat) step(event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1); }
       else if (event.code === "Space" && !target.closest("button, a")) { event.preventDefault(); if (!event.repeat) setPlaying(value => !value); }
     };
     window.addEventListener("keydown", onKey); return () => window.removeEventListener("keydown", onKey);
-  }, [step, aboutOpen]);
+  }, [step, aboutOpen, storyOpen]);
 
   useEffect(() => {
     let accumulated = 0, lastWheel = 0, changedAt = -1000;
     const onWheel = (event: WheelEvent) => {
-      if (aboutOpen || event.ctrlKey || event.metaKey || Math.abs(event.deltaY) < Math.abs(event.deltaX) || event.deltaY === 0) return;
+      if (aboutOpen || storyOpen || event.ctrlKey || event.metaKey || Math.abs(event.deltaY) < Math.abs(event.deltaX) || event.deltaY === 0) return;
       if (document.documentElement.scrollHeight <= window.innerHeight + 2) event.preventDefault();
       const now = performance.now(), delta = wheelPixels(event.deltaY, event.deltaMode, window.innerHeight);
       if (now - lastWheel > 180 || Math.sign(accumulated) !== Math.sign(delta)) accumulated = 0;
@@ -79,13 +87,12 @@ export default function Home() {
     };
     const room = roomRef.current;
     room?.addEventListener("wheel", onWheel, { passive: false }); return () => room?.removeEventListener("wheel", onWheel);
-  }, [step, aboutOpen]);
+  }, [step, aboutOpen, storyOpen]);
 
   return <div className="portfolio">
     <a className="skip-link" href="#player-controls">Skip to player controls</a>
     <header className="site-header">
-      <a className="site-brand" href="#" onClick={() => choose(0)} aria-label="Story home">Story<span>.</span></a>
-      <h1>Chris Kim</h1>
+      <h1><a href="#" onClick={event => { event.preventDefault(); choose(0); }}>Chris Kim<span>.</span></a></h1>
       <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => setAboutOpen(true)}>About</button><a href="mailto:chriskkim2025@gmail.com">Say hello <ArrowUpRight aria-hidden="true" /></a></nav>
     </header>
     <main ref={roomRef} className="listening-room" aria-label="Christopher Kim’s experience tapes">
@@ -100,13 +107,22 @@ export default function Home() {
         </div>
         <p className="interaction-hint"><span className="desktop-hint">Scroll or use ← →</span><span className="mobile-hint">Swipe to switch tapes</span></p>
       </section>
-      <nav className="tape-collection" aria-label="Choose an experience tape">{editions.map((edition, i) => <button key={edition.label} className={`library-tape ${i === index ? "selected" : ""}`} onClick={() => choose(i)} aria-label={`Play ${portfolioTracks[i].company} experience`} aria-pressed={i === index} style={{ "--accent": edition.color } as CSSProperties}><Tape index={i} playing={false} /></button>)}</nav>
+      <aside className="tape-shelf" aria-labelledby="shelf-title">
+        <div className="shelf-heading"><h2 id="shelf-title">A few chapters.</h2><p>Pick a tape to explore.</p></div>
+        <nav className="tape-collection" aria-label="Read about an experience">{[0, 1].map(row => <div className="shelf-row" key={row}>{editions.slice(row * 2, row * 2 + 2).map((edition, column) => { const i = row * 2 + column; return <button key={edition.label} className={`library-tape ${i === index ? "selected" : ""}`} onClick={event => { storyTrigger.current = event.currentTarget; choose(i); setStoryOpen(true); }} aria-label={`Read about ${portfolioTracks[i].company}`} aria-haspopup="dialog" aria-pressed={i === index} style={{ "--accent": edition.color } as CSSProperties}><Tape index={i} playing={false} /><span className="tape-number" aria-hidden="true">0{i + 1}</span></button>; })}</div>)}</nav>
+      </aside>
     </main>
     <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">Cassette {index + 1} of 4: {portfolioTracks[index].company}.</div>
     <Dialog open={aboutOpen} onOpenChange={setAboutOpen}><DialogContent className="about-dialog" onCloseAutoFocus={event => { event.preventDefault(); aboutTrigger.current?.focus(); }}>
       <DialogTitle>Hi, I’m Chris.</DialogTitle>
       <DialogDescription>A software engineer studying computer science at UNC Chapel Hill. I like building systems, working with AI, and making things work together.</DialogDescription>
       <div className="about-links"><a href="https://github.com/ckkunc" target="_blank" rel="noreferrer">GitHub <ArrowUpRight aria-hidden="true" /></a><a href="https://www.linkedin.com/in/chris-kim-unc/" target="_blank" rel="noreferrer">LinkedIn <ArrowUpRight aria-hidden="true" /></a><a href={asset("Christopher-Kim-Resume.pdf")} target="_blank" rel="noreferrer">Résumé <ArrowUpRight aria-hidden="true" /></a></div>
+    </DialogContent></Dialog>
+    <Dialog open={storyOpen} onOpenChange={setStoryOpen}><DialogContent className="about-dialog story-dialog" onCloseAutoFocus={event => { event.preventDefault(); storyTrigger.current?.focus(); }}>
+      <div className="story-tape"><Tape index={index} playing={false} /></div>
+      <div className="story-heading"><span className="story-counter">0{index + 1} / 04</span><DialogTitle>{portfolioTracks[index].company}</DialogTitle><DialogDescription>{portfolioTracks[index].role}<br />{portfolioTracks[index].dates}</DialogDescription></div>
+      <p className="story-summary">{stories[index]}</p>
+      <div className="story-navigation"><button onClick={() => step(-1)} aria-label="Read previous experience"><ArrowLeft aria-hidden="true" /> Previous</button><button onClick={() => step(1)} aria-label="Read next experience">Next <ArrowRight aria-hidden="true" /></button></div>
     </DialogContent></Dialog>
   </div>;
 }

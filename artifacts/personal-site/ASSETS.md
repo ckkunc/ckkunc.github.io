@@ -9,6 +9,8 @@ Portfolio asset provenance
 - `public/images/fidelity-logo.ico`: https://digital.fidelity.com/ctgw/digital/prelogin/assets/favicon.ico
 - `public/Christopher-Kim-Resume.pdf`: supplied by Christopher Kim.
 
+The cassette source is 1536 × 1024 pixels. Shelf tapes render at full opacity without rotation, and labels remain live vector text/logo elements. A requested higher-resolution imagegen edit returned the same dimensions with a baked background, so it was not substituted for the cleaner original. The shelf detail view shows the original at a larger scale without stretching its pixels.
+
 Company marks identify the organizations listed in the portfolio. Source icon licenses remain available in the installed react-icons package.
 
 Local development uses the existing pnpm workspace. Build the portfolio with `pnpm --filter @workspace/personal-site build`. Run TypeScript checks with `pnpm --filter @workspace/personal-site typecheck` and the navigation tests with `node --test artifacts/personal-site/src/lib/player.test.ts` from the repository root (Node 24).
