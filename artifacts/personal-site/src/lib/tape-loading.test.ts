@@ -5,6 +5,44 @@ import { initialTapeLoading, tapeFlightFrames, tapeFlightGeometry, tapeLoadingRe
 const geometry = tapeFlightGeometry({ left: 850, top: 320, width: 180 }, { a: .5, b: 0, c: 0, d: .5, e: 400, f: 450 })!;
 const select = (index: number, openNotes = true) => ({ type: "select" as const, index, openNotes, direction: 1, geometry });
 
+test("clicking the loaded tape opens notes without reinsertion or a new glint", () => {
+  const initialNotes = tapeLoadingReducer(initialTapeLoading, select(0));
+  assert.equal(initialNotes.flight, null);
+  assert.equal(initialNotes.storyOpen, true);
+  assert.equal(initialNotes.glint, 0);
+
+  const flying = tapeLoadingReducer(initialTapeLoading, select(2));
+  const landed = tapeLoadingReducer(flying, { type: "land", id: flying.requestId });
+  const closed = tapeLoadingReducer(landed, { type: "notes", open: false });
+  const reopened = tapeLoadingReducer(closed, select(2));
+  assert.equal(reopened.index, 2);
+  assert.equal(reopened.flight, null);
+  assert.equal(reopened.storyOpen, true);
+  assert.equal(reopened.glint, landed.glint);
+  assert.equal(reopened.landedFromShelf, landed.landedFromShelf);
+});
+
+test("choosing the loaded tape cancels another pending load and ignores its completion", () => {
+  const flying = tapeLoadingReducer(initialTapeLoading, select(2));
+  const opened = tapeLoadingReducer(flying, select(0));
+  assert.equal(opened.index, 0);
+  assert.equal(opened.requestedIndex, 0);
+  assert.equal(opened.flight, null);
+  assert.equal(opened.storyOpen, true);
+  assert.equal(tapeLoadingReducer(opened, { type: "land", id: flying.requestId }), opened);
+});
+
+test("clicking a tape already in flight keeps its animation and opens notes on landing", () => {
+  const flying = tapeLoadingReducer(initialTapeLoading, select(2, false));
+  const requestedNotes = tapeLoadingReducer(flying, select(2));
+  assert.equal(requestedNotes.flight!.id, flying.flight!.id);
+  assert.equal(requestedNotes.requestId, flying.requestId);
+  assert.equal(tapeLoadingReducer(requestedNotes, select(2)), requestedNotes);
+  const landed = tapeLoadingReducer(requestedNotes, { type: "land", id: flying.requestId });
+  assert.equal(landed.index, 2);
+  assert.equal(landed.storyOpen, true);
+});
+
 test("liner notes open immediately when the tape lands", () => {
   const flying = tapeLoadingReducer(initialTapeLoading, select(2));
   assert.equal(flying.index, 0);

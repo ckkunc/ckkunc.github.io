@@ -75,6 +75,12 @@ export type TapeLoadingAction =
 export function tapeLoadingReducer(state: TapeLoadingState, action: TapeLoadingAction): TapeLoadingState {
   switch (action.type) {
     case "select": {
+      if (action.index === state.index) {
+        return { ...state, requestId: state.requestId + 1, requestedIndex: state.index, flight: null, storyOpen: action.openNotes };
+      }
+      if (state.flight?.index === action.index) {
+        return action.openNotes && !state.flight.openNotes ? { ...state, flight: { ...state.flight, openNotes: true } } : state;
+      }
       const requestId = state.requestId + 1;
       const flight = action.geometry ? { ...action.geometry, id: requestId, index: action.index, openNotes: action.openNotes } : null;
       return { ...state, requestId, requestedIndex: action.index, direction: action.direction, flight,

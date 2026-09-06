@@ -16,10 +16,10 @@ const editions = [
   { label: "Fidelity", color: "#087b32" },
 ];
 const stories = [
-  "At Databricks, I worked on sharing data without making copies of it. I built secure access to shallow-cloned Delta tables across S3, Azure, and GCS. The feature reached four private-preview partners and avoided more than 25 TB of duplicate storage.",
-  "At Mercor, I built the pipeline that checked and prepared coding trajectories for Meta’s Code World Model. Combining automated validation with model-based evaluation helped the team review over 1,000 trajectories with 42% less manual work.",
-  "At Amazon, I built an AI-powered system to help engineers understand incidents. It connected service logs with runbooks and documentation, using AWS Bedrock agents to help engineers find the problem and resolve incidents 2.5 times faster.",
-  "At Fidelity, I built tools that helped financial associates understand customer accounts at a glance. Responsive interfaces and real-time recommendations made conversations easier and cut customer response time by 30%.",
+  "I built support for sharing shallow-cloned Delta tables, with secure access and credential handling across S3, Azure, and GCS.",
+  "I built a pipeline that ingests and evaluates coding trajectories for Meta’s Code World Model, combining automated validation with model-based review.",
+  "I built an AI incident-analysis tool that connects service logs with runbooks and documentation using AWS Bedrock agents.",
+  "I built an account-analysis tool for financial associates, with responsive interfaces and real-time personalized recommendations.",
 ];
 
 function Tape({ index, playing }: { index: number; playing: boolean }) {
