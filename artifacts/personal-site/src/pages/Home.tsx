@@ -43,17 +43,17 @@ const FlyingTape = memo(function FlyingTape({ flight, onLand }: { flight: TapeFl
   ><Tape index={flight.index} playing={false} /></motion.div></div>, document.body);
 });
 
-function Walkman({ index, playing, direction, loading, glint, landedFromShelf, windowRef, onToggle }: { index: number; playing: boolean; direction: number; loading: boolean; glint: number; landedFromShelf: boolean; windowRef: RefObject<SVGGElement | null>; onToggle: () => void }) {
+function CassettePlayer({ index, playing, direction, loading, glint, landedFromShelf, windowRef, onToggle }: { index: number; playing: boolean; direction: number; loading: boolean; glint: number; landedFromShelf: boolean; windowRef: RefObject<SVGGElement | null>; onToggle: () => void }) {
   const reducedMotion = useReducedMotion();
-  return <svg className="walkman" viewBox="0 125 1122 1110" role="img" aria-label={`Story Walkman with orange headphones. ${editions[index].label} cassette ${playing ? "playing" : "paused"}.`}>
-    <defs><clipPath id="walkman-cutout">
+  return <svg className="cassette-player" viewBox="0 125 1122 1110" role="img" aria-label={`Story cassette player with orange headphones. ${editions[index].label} cassette ${playing ? "playing" : "paused"}.`}>
+    <defs><clipPath id="cassette-player-cutout">
       <path d="M149 359 C275 214 443 150 582 152 C741 147 875 222 977 349 L971 355 C859 224 734 155 582 158 C423 156 283 222 157 365 Z" />
       <path d="M152 357 L175 351 L193 355 L196 367 L154 478 C139 578 133 668 136 755 L146 784 L137 844 L126 866 L100 846 L88 788 L89 755 L97 749 C91 648 100 552 110 477 L139 384 Z" />
       <path d="M963 351 L978 347 L998 351 L1026 458 L1029 479 L1030 718 L1038 737 L1034 764 L1008 779 L991 726 L989 479 L955 382 L954 367 Z" />
       <path d="M137 789 C144 767 173 758 206 759 L216 762 L213 672 L232 666 L232 644 L260 636 L320 639 L343 635 L348 628 L486 622 L489 628 L907 616 L937 620 L940 632 L973 633 L979 641 L979 729 C1002 720 1030 735 1050 764 C1063 787 1073 814 1075 835 L1092 829 L1094 841 L1081 893 L1065 900 C1053 939 1036 965 1008 969 L977 969 L977 1120 Q977 1136 963 1140 L253 1193 Q227 1195 216 1176 L214 1106 L214 1015 L193 1015 C168 1013 154 996 145 972 L128 958 L115 950 L99 927 L100 843 L121 837 L129 849 Z" />
       <path d="M151 961 C139 1000 153 1036 173 1068 Q186 1088 218 1093 L218 1100 Q178 1093 166 1071 C143 1037 132 1001 144 960 Z" />
     </clipPath></defs>
-    <image href={asset("images/story-walkman.png")} width="1122" height="1402" clipPath="url(#walkman-cutout)" />
+    <image href={asset("images/story-cassette-player.png")} width="1122" height="1402" clipPath="url(#cassette-player-cutout)" />
     <g ref={windowRef} transform="translate(531 918) rotate(-3.8)"><foreignObject width="318" height="146">
       <div className="glass-window"><AnimatePresence initial={false} mode="popLayout" custom={direction}>
         <motion.div key={`${index}:${glint}`} className="loaded-tape" custom={direction} variants={{ enter: (d: number) => ({ y: reducedMotion || landedFromShelf ? 0 : d * -155, opacity: landedFromShelf ? 1 : 0, rotate: reducedMotion || landedFromShelf ? 0 : -4 }), center: { y: 0, opacity: 1, rotate: 0 }, ejected: { y: reducedMotion ? 0 : 145, opacity: 0, rotate: reducedMotion ? 0 : 3 }, exit: (d: number) => ({ y: reducedMotion ? 0 : d * 155, opacity: 0, rotate: reducedMotion ? 0 : 4 }) }} initial="enter" animate={loading ? "ejected" : "center"} exit="exit" transition={{ duration: reducedMotion ? .1 : .3, ease: [.22, 1, .36, 1] }}><Tape index={index} playing={playing && !loading} /></motion.div>
@@ -138,7 +138,7 @@ export default function Home() {
       <section className="player-stage" aria-label="Interactive cassette player"
         onTouchStart={event => { const t = event.touches[0]; touchRef.current = { x: t.clientX, y: t.clientY }; }}
         onTouchEnd={event => { const start = touchRef.current; touchRef.current = null; if (!start) return; const t = event.changedTouches[0], dx = t.clientX - start.x, dy = t.clientY - start.y; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1); }}>
-        <div className="device-wrap"><Walkman index={index} playing={playing} direction={direction} loading={!!flight} glint={glint} landedFromShelf={landedFromShelf} windowRef={windowRef} onToggle={() => setPlaying(value => !value)} /></div>
+        <div className="device-wrap"><CassettePlayer index={index} playing={playing} direction={direction} loading={!!flight} glint={glint} landedFromShelf={landedFromShelf} windowRef={windowRef} onToggle={() => setPlaying(value => !value)} /></div>
         <div className="transport" id="player-controls" role="group" aria-label="Cassette controls" tabIndex={-1}>
           <button type="button" onClick={() => step(-1)} aria-label="Previous cassette" title="Previous cassette (←)"><Rewind aria-hidden="true" fill="currentColor" strokeWidth={1} /></button>
           <button type="button" className="play-button" onClick={() => setPlaying(value => !value)} aria-label={playing ? "Pause cassette animation" : "Play cassette animation"} aria-pressed={playing} title="Play / pause (Space)">{playing ? <Pause aria-hidden="true" fill="currentColor" strokeWidth={1} /> : <Play aria-hidden="true" fill="currentColor" strokeWidth={1} />}</button>
