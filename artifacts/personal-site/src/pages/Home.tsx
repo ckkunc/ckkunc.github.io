@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronsLeft, ChevronsRight, Pause, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, FastForward, Pause, Play, Rewind } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { portfolioTracks } from "@/content";
 import { nextTape, wheelPixels } from "@/lib/player";
@@ -92,7 +92,7 @@ export default function Home() {
   return <div className="portfolio">
     <a className="skip-link" href="#player-controls">Skip to player controls</a>
     <header className="site-header">
-      <h1><a href="#" onClick={event => { event.preventDefault(); choose(0); }}>Chris Kim<span>.</span></a></h1>
+      <h1><a href="#" onClick={event => { event.preventDefault(); choose(0); }}>Chris Kim</a></h1>
       <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => setAboutOpen(true)}>About</button><a href="mailto:chriskkim2025@gmail.com">Say hello <ArrowUpRight aria-hidden="true" /></a></nav>
     </header>
     <main ref={roomRef} className="listening-room" aria-label="Christopher Kim’s experience tapes">
@@ -101,9 +101,9 @@ export default function Home() {
         onTouchEnd={event => { const start = touchRef.current; touchRef.current = null; if (!start) return; const t = event.changedTouches[0], dx = t.clientX - start.x, dy = t.clientY - start.y; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1); }}>
         <div className="device-wrap"><Walkman index={index} playing={playing} direction={direction} onToggle={() => setPlaying(value => !value)} /></div>
         <div className="transport" id="player-controls" role="group" aria-label="Cassette controls" tabIndex={-1}>
-          <button onClick={() => step(-1)} aria-label="Previous cassette" title="Previous cassette (←)"><ChevronsLeft aria-hidden="true" /></button>
-          <button className="play-button" onClick={() => setPlaying(value => !value)} aria-label={playing ? "Pause cassette animation" : "Play cassette animation"} aria-pressed={playing} title="Play / pause (Space)">{playing ? <Pause aria-hidden="true" fill="currentColor" /> : <Play aria-hidden="true" fill="currentColor" />}</button>
-          <button onClick={() => step(1)} aria-label="Next cassette" title="Next cassette (→)"><ChevronsRight aria-hidden="true" /></button>
+          <button type="button" onClick={() => step(-1)} aria-label="Previous cassette" title="Previous cassette (←)"><Rewind aria-hidden="true" fill="currentColor" strokeWidth={1} /></button>
+          <button type="button" className="play-button" onClick={() => setPlaying(value => !value)} aria-label={playing ? "Pause cassette animation" : "Play cassette animation"} aria-pressed={playing} title="Play / pause (Space)">{playing ? <Pause aria-hidden="true" fill="currentColor" strokeWidth={1} /> : <Play aria-hidden="true" fill="currentColor" strokeWidth={1} />}</button>
+          <button type="button" onClick={() => step(1)} aria-label="Next cassette" title="Next cassette (→)"><FastForward aria-hidden="true" fill="currentColor" strokeWidth={1} /></button>
         </div>
         <p className="interaction-hint"><span className="desktop-hint">Scroll or use ← →</span><span className="mobile-hint">Swipe to switch tapes</span></p>
       </section>
