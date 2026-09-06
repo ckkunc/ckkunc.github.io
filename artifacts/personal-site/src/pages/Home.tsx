@@ -7,10 +7,10 @@ import { nextTape, wheelPixels } from "@/lib/player";
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 const editions = [
-  { label: "Databricks", color: "#ff3621", ink: "#171b1e", logoFilter: "brightness(0)" },
-  { label: "Mercor", color: "#5a4afc", ink: "#ffffff", logoFilter: "brightness(0) invert(1)" },
-  { label: "Amazon", color: "#ff9900", ink: "#171b1e", logoFilter: "brightness(0)" },
-  { label: "Fidelity", color: "#087b32", ink: "#ffffff", logoFilter: "none" },
+  { label: "Databricks", color: "#ff3621" },
+  { label: "Mercor", color: "#5a4afc" },
+  { label: "Amazon", color: "#ff9900" },
+  { label: "Fidelity", color: "#087b32" },
 ];
 const stories = [
   "At Databricks, I worked on sharing data without making copies of it. I built secure access to shallow-cloned Delta tables across S3, Azure, and GCS. The feature reached four private-preview partners and avoided more than 25 TB of duplicate storage.",
@@ -21,9 +21,9 @@ const stories = [
 
 function Tape({ index, playing }: { index: number; playing: boolean }) {
   const edition = editions[index];
-  return <div className={`tape ${playing ? "tape-playing" : ""}`} style={{ "--tape-color": edition.color, "--tape-ink": edition.ink, "--logo-filter": edition.logoFilter } as CSSProperties} aria-hidden="true">
+  return <div className={`tape tape-${edition.label.toLowerCase()} ${playing ? "tape-playing" : ""}`} style={{ "--tape-color": edition.color } as CSSProperties} aria-hidden="true">
     <img className="tape-photo" src={asset("images/cassette.png")} alt="" draggable={false} />
-    <div className="tape-colorwash" />
+    <div className="tape-stripe" />
     <div className="tape-label"><img src={asset(`images/${edition.label.toLowerCase()}-logo.${index === 3 ? "ico" : "svg"}`)} className="company-logo" alt="" /><strong>{edition.label}</strong></div>
     <span className="tape-hub tape-hub-left" /><span className="tape-hub tape-hub-right" />
   </div>;

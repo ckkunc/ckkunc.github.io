@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap");
 @import "tailwindcss";
+@font-face { font-family: "Tape Condensed"; src: url("/fonts/tape-databricks.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: "Tape Marker"; src: url("/fonts/tape-mercor.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: "Tape Hand"; src: url("/fonts/tape-amazon.woff2") format("woff2"); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: "Tape Typewriter"; src: url("/fonts/tape-fidelity.woff2") format("woff2"); font-style: normal; font-weight: 400; font-display: swap; }
 @theme inline { --color-background: #f2f1ec; --color-foreground: #272c2c; --color-muted-foreground: #606760; --color-border: #d7d8ce; --color-ring: #3e5a8e; }
 :root { font-family: "DM Sans", sans-serif; color: #272c2c; background: #f2f1ec; font-synthesis: none; text-rendering: optimizeLegibility; --paper: #f2f1ec; --ink: #272c2c; --line: #d8d9d1; --blue: #3e5276; --orange: #c95322; --mono: "IBM Plex Mono", monospace; --serif: "Instrument Serif", Georgia, serif; --header-height: 78px; }
 * { box-sizing: border-box; }
@@ -30,10 +34,16 @@ button:hover, a:hover { color: var(--orange); }
 .glass-reflection { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(120deg, #ffffff09 0%, #ffffff12 18%, transparent 19%, #dbe8f90a 65%, #e4e9eb10 100%); box-shadow: inset 0 0 8px 3px #0009, inset 0 2px 2px #fff2; }
 .tape { width: 100%; position: relative; aspect-ratio: 1.5; isolation: isolate; container-type: inline-size; }
 .tape-photo { display: block; width: 100%; height: 100%; user-select: none; }
-.tape-colorwash { position: absolute; inset: 0; background: var(--tape-color); mix-blend-mode: multiply; mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 1024'%3E%3Cpath fill='white' fill-rule='evenodd' d='M165 110H1375L1438 170V642Q1438 690 1386 690H136Q94 690 94 643V181ZM442 326H1090A128 126 0 0 1 1090 578H442A128 126 0 0 1 442 326Z'/%3E%3C/svg%3E"); mask-size: 100% 100%; mask-repeat: no-repeat; }
-.tape-label { position: absolute; top: 13.15%; left: 10.3%; width: 79.4%; height: 18.25%; background: var(--tape-color); display: flex; gap: 3.7cqw; align-items: center; padding: 0 3%; border-radius: 2px 2px 0 0; color: var(--tape-ink); font-family: var(--mono); text-align: left; }
-.company-logo { width: 9.5cqw; height: 9.5cqw; object-fit: contain; flex-shrink: 0; filter: var(--logo-filter); }
-.tape-label strong { display: block; font-weight: 600; font-size: 8.3cqw; letter-spacing: -.25cqw; line-height: 1; }
+/* Trace only the two exposed stripe sections, leaving paper and reel housing untouched. */
+.tape-stripe { position: absolute; inset: 0; background: var(--tape-color); mix-blend-mode: color; mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 1024'%3E%3Cpath fill='white' d='M97 354H347L342 360 326 380 315 400 308 420 304 440 303 460 305 480 311 500 318 515H97ZM1187 354H1439V515H1214L1221 500 1226 480 1229 460 1228 440 1225 420 1218 400 1207 380 1190 360Z'/%3E%3C/svg%3E"); mask-size: 100% 100%; mask-repeat: no-repeat; }
+.tape-label { position: absolute; top: 13.15%; left: 10.3%; width: 79.4%; height: 18.25%; display: flex; gap: 4cqw; align-items: center; padding: 0 3%; color: #292b29; font-family: var(--mono); text-align: left; mix-blend-mode: multiply; }
+.company-logo { width: 8.5cqw; height: 8.5cqw; object-fit: contain; flex-shrink: 0; filter: brightness(0); opacity: .84; }
+.tape-label strong { display: block; font-size: 9cqw; line-height: 1; white-space: nowrap; }
+.tape-databricks .tape-label strong { font-family: "Tape Condensed", "Arial Narrow", sans-serif; font-weight: 700; font-size: 11.3cqw; letter-spacing: .18cqw; text-transform: uppercase; }
+.tape-mercor .tape-label strong { font-family: "Tape Marker", cursive; font-weight: 400; font-size: 11.8cqw; letter-spacing: -.25cqw; transform: rotate(-1.5deg); }
+.tape-amazon .tape-label strong { font-family: "Tape Hand", cursive; font-weight: 700; font-size: 15.5cqw; letter-spacing: -.3cqw; transform: rotate(1deg); }
+.tape-fidelity .tape-label strong { font-family: "Tape Typewriter", var(--mono); font-weight: 400; font-size: 8.8cqw; letter-spacing: .15cqw; text-transform: uppercase; }
+.tape-fidelity .company-logo { filter: grayscale(1) contrast(1.15); }
 .tape-hub { position: absolute; width: 11.46%; height: 17.19%; top: 35.65%; border-radius: 50%; background-image: url("/images/cassette.png"); background-size: 872.73% 581.82%; background-repeat: no-repeat; animation: spool 4s linear infinite paused; }
 .tape-hub-left { left: 22.92%; background-position: 25.88% 43.04%; }
 .tape-hub-right { left: 65.49%; background-position: 73.97% 43.04%; animation-duration: 5.7s; }
