@@ -1,6 +1,6 @@
 {
   "project_id": "appgprj_6a9cc71521e8819186862ad097e5fab7",
   "static": {
-    "directory": "artifacts/personal-site/dist/public"
+    "directory": "dist"
   }
 }
