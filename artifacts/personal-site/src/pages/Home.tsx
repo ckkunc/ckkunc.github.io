@@ -132,7 +132,7 @@ export default function Home() {
     <a className="skip-link" href="#player-controls">Skip to player controls</a>
     <header className="site-header">
       <h1><a href="#" onClick={event => { event.preventDefault(); choose(0); }}>Chris Kim</a></h1>
-      <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => { dispatch({ type: "cancel" }); setAboutOpen(true); }}>About</button><a href="mailto:chriskkim2025@gmail.com" onClick={() => dispatch({ type: "cancel" })}>Say hello <ArrowUpRight aria-hidden="true" /></a></nav>
+      <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => { dispatch({ type: "cancel" }); setAboutOpen(true); }}>About</button></nav>
     </header>
     <main ref={roomRef} className="listening-room" aria-label="Christopher Kim’s experience tapes">
       <section className="player-stage" aria-label="Interactive cassette player"
