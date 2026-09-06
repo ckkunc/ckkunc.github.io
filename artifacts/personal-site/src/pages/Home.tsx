@@ -24,7 +24,8 @@ function Tape({ index, playing }: { index: number; playing: boolean }) {
   return <div className={`tape tape-${edition.label.toLowerCase()} ${playing ? "tape-playing" : ""}`} style={{ "--tape-color": edition.color } as CSSProperties} aria-hidden="true">
     <img className="tape-photo" src={asset("images/cassette.png")} alt="" draggable={false} />
     <div className="tape-stripe" />
-    <div className="tape-label"><img src={asset(`images/${edition.label.toLowerCase()}-logo.${index === 3 ? "ico" : "svg"}`)} className="company-logo" alt="" /><strong>{edition.label}</strong></div>
+    <div className="tape-label"><strong>{edition.label}</strong></div>
+    <img src={asset(`images/${edition.label.toLowerCase()}-logo.${index === 3 ? "ico" : "svg"}`)} className="company-logo" alt="" draggable={false} />
     <span className="tape-hub tape-hub-left" /><span className="tape-hub tape-hub-right" />
   </div>;
 }

@@ -35,8 +35,8 @@ button:hover, a:hover { color: var(--orange); }
 .tape-photo { display: block; width: 100%; height: 100%; user-select: none; }
 /* Trace only the two exposed stripe sections, leaving paper and reel housing untouched. */
 .tape-stripe { position: absolute; inset: 0; background: var(--tape-color); mix-blend-mode: color; mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1536 1024'%3E%3Cpath fill='white' d='M97 354H347L342 360 326 380 315 400 308 420 304 440 303 460 305 480 311 500 318 515H97ZM1187 354H1439V515H1214L1221 500 1226 480 1229 460 1228 440 1225 420 1218 400 1207 380 1190 360Z'/%3E%3C/svg%3E"); mask-size: 100% 100%; mask-repeat: no-repeat; }
-.tape-label { position: absolute; top: 13.15%; left: 10.3%; width: 79.4%; height: 18.25%; display: flex; gap: 4cqw; align-items: center; padding: 0 3%; color: #292b29; font-family: var(--mono); text-align: left; mix-blend-mode: multiply; }
-.company-logo { width: 8.5cqw; height: 8.5cqw; object-fit: contain; flex-shrink: 0; filter: brightness(0); opacity: .84; }
+.tape-label { position: absolute; top: 13.15%; left: 10.3%; width: 79.4%; height: 18.25%; display: flex; align-items: center; justify-content: center; color: #292b29; font-family: var(--mono); text-align: center; mix-blend-mode: multiply; }
+.company-logo { position: absolute; top: 61.9%; left: 50%; width: 5.2%; height: 7.8%; transform: translate(-50%, -50%); object-fit: contain; filter: brightness(0); opacity: .84; mix-blend-mode: multiply; }
 .tape-label strong { display: block; font-size: 9cqw; line-height: 1; white-space: nowrap; }
 .tape-databricks .tape-label strong { font-family: "Tape Condensed", "Arial Narrow", sans-serif; font-weight: 700; font-size: 11.3cqw; letter-spacing: .18cqw; text-transform: uppercase; }
 .tape-mercor .tape-label strong { font-family: "Tape Marker", cursive; font-weight: 400; font-size: 11.8cqw; letter-spacing: -.25cqw; transform: rotate(-1.5deg); }
