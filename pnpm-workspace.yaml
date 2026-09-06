@@ -73,6 +73,13 @@ onlyBuiltDependencies:
   - msw
   - unrs-resolver
 
+# pnpm 11 uses allowBuilds; keep the same allowlist as pnpm 10 above.
+allowBuilds:
+  "@swc/core": true
+  esbuild: true
+  msw: true
+  unrs-resolver: true
+
 overrides:
   # replit uses linux-x64 only, we can exclude all other platforms
   "esbuild>@esbuild/darwin-arm64": "-"

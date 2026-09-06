@@ -1,0 +1,14 @@
+Portfolio asset provenance
+==========================
+
+- `public/images/story-walkman.png`: imagegen edit of the photograph supplied by Christopher Kim. Blue and silver body, orange headphones, and original composition preserved; SONY changed to STORY and the glass emptied for the interactive cassette. The application clips the photograph to the product silhouette.
+- `public/images/cassette.png`: imagegen-created photographic cassette with a blank label. Company, logo, and role are live HTML over the paper label; the hubs rotate and the entire cassette changes on navigation.
+- `public/images/databricks-logo.svg`: Simple Icons / react-icons, SiDatabricks.
+- `public/images/amazon-logo.svg`: Font Awesome / react-icons, FaAmazon.
+- `public/images/mercor-logo.svg`: https://www.mercor.com/images/m_logo.svg
+- `public/images/fidelity-logo.ico`: https://digital.fidelity.com/ctgw/digital/prelogin/assets/favicon.ico
+- `public/Christopher-Kim-Resume.pdf`: supplied by Christopher Kim.
+
+Company marks identify the organizations listed in the portfolio. Source icon licenses remain available in the installed react-icons package.
+
+Local development uses the existing pnpm workspace. Build the portfolio with `pnpm --filter @workspace/personal-site build`. Run TypeScript checks with `pnpm --filter @workspace/personal-site typecheck` and the navigation tests with `node --test artifacts/personal-site/src/lib/player.test.ts` from the repository root (Node 24).
