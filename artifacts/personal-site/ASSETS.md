@@ -2,7 +2,7 @@ Portfolio asset provenance
 ==========================
 
 - `public/images/story-walkman.png`: imagegen edit of the photograph supplied by Christopher Kim. Blue and silver body, orange headphones, and original composition preserved; SONY changed to STORY and the glass emptied for the interactive cassette. The application clips the photograph to the product silhouette.
-- `public/images/cassette.png`: imagegen-created photographic cassette with a blank label. Company, logo, and role are live HTML over the paper label; the hubs rotate and the entire cassette changes on navigation.
+- `public/images/cassette.png`: imagegen-created photographic cassette with a blank label. Company name and logo are live HTML over a bold company-colored paper label; the hubs rotate and the entire cassette changes on navigation.
 - `public/images/databricks-logo.svg`: Simple Icons / react-icons, SiDatabricks.
 - `public/images/amazon-logo.svg`: Font Awesome / react-icons, FaAmazon.
 - `public/images/mercor-logo.svg`: https://www.mercor.com/images/m_logo.svg
