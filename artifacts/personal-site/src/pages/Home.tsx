@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { memo, useCallback, useEffect, useReducer, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { createPortal } from "react-dom";
+import { Content as DialogSurface } from "@radix-ui/react-dialog";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight, FastForward, Pause, Play, Rewind } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, ArrowRight, ArrowUpRight, FastForward, Pause, Play, Rewind, X } from "lucide-react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import { portfolioTracks } from "@/content";
 import { nextTape, wheelPixels } from "@/lib/player";
+import { initialTapeLoading, tapeFlightGeometry, tapeLoadingReducer, type TapeFlight } from "@/lib/tape-loading";
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 const editions = [
@@ -30,7 +33,24 @@ function Tape({ index, playing }: { index: number; playing: boolean }) {
   </div>;
 }
 
-function Walkman({ index, playing, direction, onToggle }: { index: number; playing: boolean; direction: number; onToggle: () => void }) {
+const FlyingTape = memo(function FlyingTape({ flight, onLand }: { flight: TapeFlight; onLand: (id: number) => void }) {
+  return createPortal(<div className="tape-flight-layer" aria-hidden="true"><motion.div
+    className="flying-tape" style={{ left: flight.left, top: flight.top, width: flight.width, transformOrigin: "0 0" }}
+    initial={{ x: 0, y: 0, scale: 1, rotate: 0, clipPath: "inset(0% 0% 0% 0% round 0px)" }}
+    animate={{
+      x: [0, 0, flight.x * .48, flight.x, flight.x],
+      y: [0, -flight.lift, flight.y * .48 - flight.lift, flight.y - 12, flight.y],
+      scale: [1, 1.08, 1.08, flight.scale, flight.scale],
+      rotate: [0, -6, -5, flight.rotate, flight.rotate],
+      clipPath: ["inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(7.43% .98% 25.05% .98% round 8px)"],
+      filter: ["drop-shadow(0 4px 3px #17201b30)", "drop-shadow(0 18px 12px #17201b40)", "drop-shadow(0 18px 12px #17201b40)", "drop-shadow(0 4px 3px #17201b20)", "drop-shadow(0 0 0 #17201b00)"],
+    }}
+    transition={{ duration: .66, times: [0, .18, .52, .87, 1], ease: [.22, 1, .36, 1] }}
+    onAnimationComplete={() => onLand(flight.id)}
+  ><Tape index={flight.index} playing={false} /></motion.div></div>, document.body);
+});
+
+function Walkman({ index, playing, direction, loading, glint, landedFromShelf, windowRef, onToggle }: { index: number; playing: boolean; direction: number; loading: boolean; glint: number; landedFromShelf: boolean; windowRef: RefObject<SVGGElement | null>; onToggle: () => void }) {
   const reducedMotion = useReducedMotion();
   return <svg className="walkman" viewBox="0 125 1122 1110" role="img" aria-label={`Story Walkman with orange headphones. ${editions[index].label} cassette ${playing ? "playing" : "paused"}.`}>
     <defs><clipPath id="walkman-cutout">
@@ -41,30 +61,62 @@ function Walkman({ index, playing, direction, onToggle }: { index: number; playi
       <path d="M151 961 C139 1000 153 1036 173 1068 Q186 1088 218 1093 L218 1100 Q178 1093 166 1071 C143 1037 132 1001 144 960 Z" />
     </clipPath></defs>
     <image href={asset("images/story-walkman.png")} width="1122" height="1402" clipPath="url(#walkman-cutout)" />
-    <foreignObject x="531" y="918" width="318" height="146" transform="rotate(-3.8 531 918)">
+    <g ref={windowRef} transform="translate(531 918) rotate(-3.8)"><foreignObject width="318" height="146">
       <div className="glass-window"><AnimatePresence initial={false} mode="popLayout" custom={direction}>
-        <motion.div key={index} className="loaded-tape" custom={direction} variants={{ enter: (d: number) => ({ y: reducedMotion ? 0 : d * -155, opacity: 0, rotate: reducedMotion ? 0 : -4 }), center: { y: 0, opacity: 1, rotate: 0 }, exit: (d: number) => ({ y: reducedMotion ? 0 : d * 155, opacity: 0, rotate: reducedMotion ? 0 : 4 }) }} initial="enter" animate="center" exit="exit" transition={{ duration: reducedMotion ? .12 : .48, ease: [.22, 1, .36, 1] }}><Tape index={index} playing={playing} /></motion.div>
-      </AnimatePresence><div className="glass-reflection" /></div>
-    </foreignObject>
+        <motion.div key={`${index}:${glint}`} className="loaded-tape" custom={direction} variants={{ enter: (d: number) => ({ y: reducedMotion || landedFromShelf ? 0 : d * -155, opacity: landedFromShelf ? 1 : 0, rotate: reducedMotion || landedFromShelf ? 0 : -4 }), center: { y: 0, opacity: 1, rotate: 0 }, ejected: { y: reducedMotion ? 0 : 145, opacity: 0, rotate: reducedMotion ? 0 : 3 }, exit: (d: number) => ({ y: reducedMotion ? 0 : d * 155, opacity: 0, rotate: reducedMotion ? 0 : 4 }) }} initial="enter" animate={loading ? "ejected" : "center"} exit="exit" transition={{ duration: reducedMotion ? .1 : .3, ease: [.22, 1, .36, 1] }}><Tape index={index} playing={playing && !loading} /></motion.div>
+      </AnimatePresence><div className="glass-reflection" />{glint > 0 && !reducedMotion && <motion.div key={glint} className="glass-glint" style={{ visibility: loading ? "hidden" : "visible" }} initial={{ x: "-140%", opacity: 0 }} animate={{ x: ["-140%", "-32%", "150%", "290%"], opacity: [0, .7, .45, 0] }} transition={{ duration: .56, ease: "easeInOut", times: [0, .25, .65, 1] }} />}</div>
+    </foreignObject></g>
     <foreignObject x="340" y="612" width="155" height="55"><button type="button" tabIndex={-1} className="hardware-hotspot" onClick={onToggle} aria-label={playing ? "Pause cassette reels" : "Play cassette reels"} title={playing ? "Pause" : "Play"} /></foreignObject>
   </svg>;
 }
 
 export default function Home() {
-  const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const [loadingState, dispatch] = useReducer(tapeLoadingReducer, initialTapeLoading);
+  const { index, direction, flight, storyOpen, pendingNotes, glint, landedFromShelf } = loadingState;
+  const reducedMotion = useReducedMotion();
   const [playing, setPlaying] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [storyOpen, setStoryOpen] = useState(false);
   const aboutTrigger = useRef<HTMLButtonElement>(null);
   const storyTrigger = useRef<HTMLButtonElement | null>(null);
+  const shelfRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const windowRef = useRef<SVGGElement>(null);
+  const selectionRef = useRef(0);
+  selectionRef.current = loadingState.requestedIndex;
   const roomRef = useRef<HTMLElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
-  const choose = useCallback((next: number) => { setDirection(next >= index ? 1 : -1); setIndex(next); }, [index]);
-  const step = useCallback((delta: number) => { setDirection(delta); setIndex(previous => nextTape(previous, delta, editions.length)); }, []);
+  const selectTape = useCallback((next: number, openNotes = false, travelDirection?: number) => {
+    const previous = selectionRef.current;
+    selectionRef.current = next;
+    const source = shelfRefs.current[next]?.getBoundingClientRect();
+    const matrix = windowRef.current?.getScreenCTM() ?? null;
+    const geometry = !reducedMotion && !storyOpen && source ? tapeFlightGeometry(source, matrix) : null;
+    dispatch({ type: "select", index: next, direction: travelDirection ?? (next >= previous ? 1 : -1), geometry, openNotes });
+  }, [reducedMotion, storyOpen]);
+  const choose = useCallback((next: number) => selectTape(next), [selectTape]);
+  const step = useCallback((delta: number) => selectTape(nextTape(selectionRef.current, delta, editions.length), storyOpen, delta), [selectTape, storyOpen]);
+  const land = useCallback((id: number) => dispatch({ type: "land", id }), []);
+
+  useEffect(() => {
+    const cancel = () => dispatch({ type: "cancel" });
+    const onVisibility = () => { if (document.hidden) cancel(); };
+    window.addEventListener("resize", cancel);
+    window.addEventListener("scroll", cancel);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { window.removeEventListener("resize", cancel); window.removeEventListener("scroll", cancel); document.removeEventListener("visibilitychange", onVisibility); };
+  }, []);
+
+  useEffect(() => { if (reducedMotion && flight) land(flight.id); }, [reducedMotion, flight, land]);
+
+  useEffect(() => {
+    if (pendingNotes === null) return;
+    if (reducedMotion) { dispatch({ type: "reveal-notes", id: pendingNotes }); return; }
+    const timer = window.setTimeout(() => dispatch({ type: "reveal-notes", id: pendingNotes }), 280);
+    return () => window.clearTimeout(timer);
+  }, [pendingNotes, reducedMotion]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === "Tab") { dispatch({ type: "cancel" }); return; }
       if (aboutOpen || storyOpen || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       const target = event.target as HTMLElement;
       if (target.closest("input, textarea, select, [contenteditable=true], [role=dialog]")) return;
@@ -94,13 +146,13 @@ export default function Home() {
     <a className="skip-link" href="#player-controls">Skip to player controls</a>
     <header className="site-header">
       <h1><a href="#" onClick={event => { event.preventDefault(); choose(0); }}>Chris Kim</a></h1>
-      <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => setAboutOpen(true)}>About</button><a href="mailto:chriskkim2025@gmail.com">Say hello <ArrowUpRight aria-hidden="true" /></a></nav>
+      <nav aria-label="Main navigation"><button ref={aboutTrigger} onClick={() => { dispatch({ type: "cancel" }); setAboutOpen(true); }}>About</button><a href="mailto:chriskkim2025@gmail.com" onClick={() => dispatch({ type: "cancel" })}>Say hello <ArrowUpRight aria-hidden="true" /></a></nav>
     </header>
     <main ref={roomRef} className="listening-room" aria-label="Christopher Kim’s experience tapes">
       <section className="player-stage" aria-label="Interactive cassette player"
         onTouchStart={event => { const t = event.touches[0]; touchRef.current = { x: t.clientX, y: t.clientY }; }}
         onTouchEnd={event => { const start = touchRef.current; touchRef.current = null; if (!start) return; const t = event.changedTouches[0], dx = t.clientX - start.x, dy = t.clientY - start.y; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1); }}>
-        <div className="device-wrap"><Walkman index={index} playing={playing} direction={direction} onToggle={() => setPlaying(value => !value)} /></div>
+        <div className="device-wrap"><Walkman index={index} playing={playing} direction={direction} loading={!!flight} glint={glint} landedFromShelf={landedFromShelf} windowRef={windowRef} onToggle={() => setPlaying(value => !value)} /></div>
         <div className="transport" id="player-controls" role="group" aria-label="Cassette controls" tabIndex={-1}>
           <button type="button" onClick={() => step(-1)} aria-label="Previous cassette" title="Previous cassette (←)"><Rewind aria-hidden="true" fill="currentColor" strokeWidth={1} /></button>
           <button type="button" className="play-button" onClick={() => setPlaying(value => !value)} aria-label={playing ? "Pause cassette animation" : "Play cassette animation"} aria-pressed={playing} title="Play / pause (Space)">{playing ? <Pause aria-hidden="true" fill="currentColor" strokeWidth={1} /> : <Play aria-hidden="true" fill="currentColor" strokeWidth={1} />}</button>
@@ -110,7 +162,7 @@ export default function Home() {
       </section>
       <aside className="tape-shelf" aria-labelledby="shelf-title">
         <div className="shelf-heading"><h2 id="shelf-title">A few chapters.</h2><p>Pick a tape to explore.</p></div>
-        <nav className="tape-collection" aria-label="Read about an experience">{[0, 1].map(row => <div className="shelf-row" key={row}>{editions.slice(row * 2, row * 2 + 2).map((edition, column) => { const i = row * 2 + column; return <button key={edition.label} className={`library-tape ${i === index ? "selected" : ""}`} onClick={event => { storyTrigger.current = event.currentTarget; choose(i); setStoryOpen(true); }} aria-label={`Read about ${portfolioTracks[i].company}`} aria-haspopup="dialog" aria-pressed={i === index} style={{ "--accent": edition.color } as CSSProperties}><Tape index={i} playing={false} /><span className="tape-number" aria-hidden="true">0{i + 1}</span></button>; })}</div>)}</nav>
+        <nav className="tape-collection" aria-label="Read about an experience">{[0, 1].map(row => <div className="shelf-row" key={row}>{editions.slice(row * 2, row * 2 + 2).map((edition, column) => { const i = row * 2 + column; return <button key={edition.label} ref={node => { shelfRefs.current[i] = node; }} className={`library-tape ${i === loadingState.requestedIndex ? "selected" : ""} ${flight?.index === i ? "is-loading" : ""}`} onClick={event => { storyTrigger.current = event.currentTarget; selectTape(i, true); }} aria-label={`Read about ${portfolioTracks[i].company}`} aria-haspopup="dialog" aria-pressed={i === loadingState.requestedIndex} style={{ "--accent": edition.color } as CSSProperties}><Tape index={i} playing={false} /><span className="tape-number" aria-hidden="true">0{i + 1}</span></button>; })}</div>)}</nav>
       </aside>
     </main>
     <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">Cassette {index + 1} of 4: {portfolioTracks[index].company}.</div>
@@ -119,11 +171,17 @@ export default function Home() {
       <DialogDescription>A software engineer studying computer science at UNC Chapel Hill. I like building systems, working with AI, and making things work together.</DialogDescription>
       <div className="about-links"><a href="https://github.com/ckkunc" target="_blank" rel="noreferrer">GitHub <ArrowUpRight aria-hidden="true" /></a><a href="https://www.linkedin.com/in/chris-kim-unc/" target="_blank" rel="noreferrer">LinkedIn <ArrowUpRight aria-hidden="true" /></a><a href={asset("Christopher-Kim-Resume.pdf")} target="_blank" rel="noreferrer">Résumé <ArrowUpRight aria-hidden="true" /></a></div>
     </DialogContent></Dialog>
-    <Dialog open={storyOpen} onOpenChange={setStoryOpen}><DialogContent className="about-dialog story-dialog" onCloseAutoFocus={event => { event.preventDefault(); storyTrigger.current?.focus(); }}>
-      <div className="story-tape"><Tape index={index} playing={false} /></div>
-      <div className="story-heading"><span className="story-counter">0{index + 1} / 04</span><DialogTitle>{portfolioTracks[index].company}</DialogTitle><DialogDescription>{portfolioTracks[index].role}<br />{portfolioTracks[index].dates}</DialogDescription></div>
-      <p className="story-summary">{stories[index]}</p>
-      <div className="story-navigation"><button onClick={() => step(-1)} aria-label="Read previous experience"><ArrowLeft aria-hidden="true" /> Previous</button><button onClick={() => step(1)} aria-label="Read next experience">Next <ArrowRight aria-hidden="true" /></button></div>
-    </DialogContent></Dialog>
+    <Dialog open={storyOpen} onOpenChange={open => dispatch({ type: "notes", open })}><DialogPortal><DialogOverlay className="liner-overlay" /><DialogSurface className="about-dialog story-dialog" style={{ "--liner-accent": editions[index].color } as CSSProperties} onCloseAutoFocus={event => { event.preventDefault(); (storyTrigger.current ?? shelfRefs.current[index])?.focus({ preventScroll: true }); }}>
+      <div className="liner-sheet">
+        <div className="liner-spine" aria-hidden="true"><span>Chris Kim · 0{index + 1}</span></div>
+        <div className="liner-cover"><div className="liner-edition" aria-hidden="true"><span>Side A</span><span>0{index + 1} / 04</span></div><div className="story-tape"><Tape index={index} playing={false} /></div><p className="liner-caption">Liner notes</p></div>
+        <div className="liner-notes"><div className="story-heading"><DialogTitle>{portfolioTracks[index].company}</DialogTitle><DialogDescription>{portfolioTracks[index].role}<br />{portfolioTracks[index].dates}</DialogDescription></div>
+          <p className="story-summary">{stories[index]}</p>
+          <div className="story-navigation"><button onClick={() => step(-1)} aria-label="Read previous experience"><ArrowLeft aria-hidden="true" /> Previous</button><button onClick={() => step(1)} aria-label="Read next experience">Next <ArrowRight aria-hidden="true" /></button></div>
+        </div>
+      </div>
+      <DialogClose className="liner-close" aria-label="Close liner notes"><X aria-hidden="true" /></DialogClose>
+    </DialogSurface></DialogPortal></Dialog>
+    {flight && !reducedMotion && <FlyingTape key={flight.id} flight={flight} onLand={land} />}
   </div>;
 }
