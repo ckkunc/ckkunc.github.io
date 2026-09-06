@@ -30,6 +30,28 @@ export function tapeFlightGeometry(source: { left: number; top: number; width: n
 }
 
 export type TapeFlight = TapeFlightGeometry & { id: number; index: number; openNotes: boolean };
+
+export function tapeFlightFrames(flight: TapeFlightGeometry) {
+  const frames = Array.from({ length: 25 }, (_, i) => {
+    const t = i / 24, u = t * t * (3 - 2 * t), v = 1 - u;
+    const arc = Math.sin(Math.PI * u);
+    const entry = Math.max(0, (t - .8) / .2), clip = entry * entry * (3 - 2 * entry);
+    return {
+      x: 3 * v * v * u * flight.x * .15 + 3 * v * u * u * flight.x * .85 + u * u * u * flight.x,
+      y: -3 * v * v * u * flight.lift + 3 * v * u * u * (flight.y - flight.lift) + u * u * u * flight.y,
+      scale: 1 + (flight.scale - 1) * u + arc * .06,
+      rotate: flight.rotate * u - arc * 4,
+      clipPath: `inset(${7.43 * clip}% ${.98 * clip}% ${25.05 * clip}% ${.98 * clip}% round ${8 * clip}px)`,
+      filter: `drop-shadow(0 ${4 * v + 16 * arc}px ${3 * v + 9 * arc}px rgba(23,32,27,${.18 * v + .1 * arc}))`,
+    };
+  });
+  return {
+    x: frames.map(frame => frame.x), y: frames.map(frame => frame.y),
+    scale: frames.map(frame => frame.scale), rotate: frames.map(frame => frame.rotate),
+    clipPath: frames.map(frame => frame.clipPath), filter: frames.map(frame => frame.filter),
+  };
+}
+
 export type TapeLoadingState = {
   index: number;
   requestedIndex: number;
@@ -37,18 +59,16 @@ export type TapeLoadingState = {
   direction: number;
   flight: TapeFlight | null;
   storyOpen: boolean;
-  pendingNotes: number | null;
   glint: number;
   landedFromShelf: boolean;
 };
 export const initialTapeLoading: TapeLoadingState = {
   index: 0, requestedIndex: 0, requestId: 0, direction: 1,
-  flight: null, storyOpen: false, pendingNotes: null, glint: 0, landedFromShelf: false,
+  flight: null, storyOpen: false, glint: 0, landedFromShelf: false,
 };
 export type TapeLoadingAction =
   | { type: "select"; index: number; direction: number; geometry: TapeFlightGeometry | null; openNotes: boolean }
   | { type: "land"; id: number }
-  | { type: "reveal-notes"; id: number }
   | { type: "cancel" }
   | { type: "notes"; open: boolean };
 
@@ -58,19 +78,17 @@ export function tapeLoadingReducer(state: TapeLoadingState, action: TapeLoadingA
       const requestId = state.requestId + 1;
       const flight = action.geometry ? { ...action.geometry, id: requestId, index: action.index, openNotes: action.openNotes } : null;
       return { ...state, requestId, requestedIndex: action.index, direction: action.direction, flight,
-        index: flight ? state.index : action.index, storyOpen: flight ? false : action.openNotes, pendingNotes: null,
+        index: flight ? state.index : action.index, storyOpen: flight ? false : action.openNotes,
         glint: flight ? state.glint : state.glint + 1, landedFromShelf: false };
     }
     case "land": {
       if (!state.flight || state.flight.id !== action.id) return state;
-      return { ...state, index: state.flight.index, flight: null, storyOpen: false, pendingNotes: state.flight.openNotes ? state.requestId : null,
+      return { ...state, index: state.flight.index, flight: null, storyOpen: state.flight.openNotes,
         glint: state.glint + 1, landedFromShelf: true };
     }
-    case "reveal-notes":
-      return state.pendingNotes === action.id && state.requestId === action.id ? { ...state, pendingNotes: null, storyOpen: true } : state;
     case "cancel":
-      return state.flight || state.pendingNotes !== null ? { ...state, requestId: state.requestId + 1, requestedIndex: state.index, flight: null, pendingNotes: null } : state;
+      return state.flight ? { ...state, requestId: state.requestId + 1, requestedIndex: state.index, flight: null } : state;
     case "notes":
-      return { ...state, storyOpen: action.open, pendingNotes: null };
+      return { ...state, storyOpen: action.open };
   }
 }

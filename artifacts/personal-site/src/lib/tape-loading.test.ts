@@ -1,19 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { initialTapeLoading, tapeFlightGeometry, tapeLoadingReducer } from "./tape-loading.ts";
+import { initialTapeLoading, tapeFlightFrames, tapeFlightGeometry, tapeLoadingReducer } from "./tape-loading.ts";
 
 const geometry = tapeFlightGeometry({ left: 850, top: 320, width: 180 }, { a: .5, b: 0, c: 0, d: .5, e: 400, f: 450 })!;
 const select = (index: number, openNotes = true) => ({ type: "select" as const, index, openNotes, direction: 1, geometry });
 
-test("a tape reaches the player before its liner notes open", () => {
+test("liner notes open immediately when the tape lands", () => {
   const flying = tapeLoadingReducer(initialTapeLoading, select(2));
   assert.equal(flying.index, 0);
   assert.equal(flying.requestedIndex, 2);
   assert.equal(flying.storyOpen, false);
   const landed = tapeLoadingReducer(flying, { type: "land", id: flying.flight!.id });
   assert.equal(landed.index, 2);
-  assert.equal(landed.storyOpen, false);
-  assert.equal(tapeLoadingReducer(landed, { type: "reveal-notes", id: landed.requestId }).storyOpen, true);
+  assert.equal(landed.storyOpen, true);
   assert.equal(landed.flight, null);
   assert.equal(landed.glint, 1);
 });
@@ -46,14 +45,26 @@ test("reduced motion and notes navigation select immediately without a flight", 
   assert.equal(next.storyOpen, true);
 });
 
-test("a canceled or superseded landing pause cannot open stale liner notes", () => {
+test("a duplicate completion cannot reopen closed liner notes", () => {
   const flying = tapeLoadingReducer(initialTapeLoading, select(1));
   const landed = tapeLoadingReducer(flying, { type: "land", id: flying.requestId });
-  const canceled = tapeLoadingReducer(landed, { type: "cancel" });
-  assert.equal(canceled.index, 1);
-  assert.equal(tapeLoadingReducer(canceled, { type: "reveal-notes", id: landed.requestId }), canceled);
-  const newer = tapeLoadingReducer(landed, select(2, false));
-  assert.equal(tapeLoadingReducer(newer, { type: "reveal-notes", id: landed.requestId }), newer);
+  const closed = tapeLoadingReducer(landed, { type: "notes", open: false });
+  assert.equal(closed.index, 1);
+  assert.equal(tapeLoadingReducer(closed, { type: "land", id: landed.requestId }), closed);
+});
+
+test("the flight path progresses continuously without intermediate holds", () => {
+  for (const x of [-450, 450]) {
+    const flight = { ...geometry, x };
+    const frames = tapeFlightFrames(flight);
+    assert.ok(Math.abs(frames.x[0]) < 1e-10);
+    assert.ok(Math.abs(frames.y[0]) < 1e-10);
+    assert.equal(frames.x.at(-1), x);
+    assert.equal(frames.y.at(-1), flight.y);
+    assert.ok(Math.abs(frames.scale.at(-1)! - flight.scale) < 1e-10);
+    for (let i = 1; i < frames.x.length; i++) assert.ok((frames.x[i] - frames.x[i - 1]) * Math.sign(x) > 0);
+    for (const values of [frames.x, frames.y, frames.rotate, frames.scale]) assert.ok(values.every(Number.isFinite));
+  }
 });
 
 test("flight destination follows a rotated, scaled and translated SVG window", () => {

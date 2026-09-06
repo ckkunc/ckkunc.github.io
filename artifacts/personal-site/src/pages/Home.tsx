@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, FastForward, Pause, Play, Rewind, 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import { portfolioTracks } from "@/content";
 import { nextTape, wheelPixels } from "@/lib/player";
-import { initialTapeLoading, tapeFlightGeometry, tapeLoadingReducer, type TapeFlight } from "@/lib/tape-loading";
+import { initialTapeLoading, tapeFlightFrames, tapeFlightGeometry, tapeLoadingReducer, type TapeFlight } from "@/lib/tape-loading";
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 const editions = [
@@ -37,15 +37,8 @@ const FlyingTape = memo(function FlyingTape({ flight, onLand }: { flight: TapeFl
   return createPortal(<div className="tape-flight-layer" aria-hidden="true"><motion.div
     className="flying-tape" style={{ left: flight.left, top: flight.top, width: flight.width, transformOrigin: "0 0" }}
     initial={{ x: 0, y: 0, scale: 1, rotate: 0, clipPath: "inset(0% 0% 0% 0% round 0px)" }}
-    animate={{
-      x: [0, 0, flight.x * .48, flight.x, flight.x],
-      y: [0, -flight.lift, flight.y * .48 - flight.lift, flight.y - 12, flight.y],
-      scale: [1, 1.08, 1.08, flight.scale, flight.scale],
-      rotate: [0, -6, -5, flight.rotate, flight.rotate],
-      clipPath: ["inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(0% 0% 0% 0% round 0px)", "inset(7.43% .98% 25.05% .98% round 8px)"],
-      filter: ["drop-shadow(0 4px 3px #17201b30)", "drop-shadow(0 18px 12px #17201b40)", "drop-shadow(0 18px 12px #17201b40)", "drop-shadow(0 4px 3px #17201b20)", "drop-shadow(0 0 0 #17201b00)"],
-    }}
-    transition={{ duration: .66, times: [0, .18, .52, .87, 1], ease: [.22, 1, .36, 1] }}
+    animate={tapeFlightFrames(flight)}
+    transition={{ duration: .46, ease: "linear" }}
     onAnimationComplete={() => onLand(flight.id)}
   ><Tape index={flight.index} playing={false} /></motion.div></div>, document.body);
 });
@@ -72,7 +65,7 @@ function Walkman({ index, playing, direction, loading, glint, landedFromShelf, w
 
 export default function Home() {
   const [loadingState, dispatch] = useReducer(tapeLoadingReducer, initialTapeLoading);
-  const { index, direction, flight, storyOpen, pendingNotes, glint, landedFromShelf } = loadingState;
+  const { index, direction, flight, storyOpen, glint, landedFromShelf } = loadingState;
   const reducedMotion = useReducedMotion();
   const [playing, setPlaying] = useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -108,13 +101,6 @@ export default function Home() {
   useEffect(() => { if (reducedMotion && flight) land(flight.id); }, [reducedMotion, flight, land]);
 
   useEffect(() => {
-    if (pendingNotes === null) return;
-    if (reducedMotion) { dispatch({ type: "reveal-notes", id: pendingNotes }); return; }
-    const timer = window.setTimeout(() => dispatch({ type: "reveal-notes", id: pendingNotes }), 280);
-    return () => window.clearTimeout(timer);
-  }, [pendingNotes, reducedMotion]);
-
-  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" || event.key === "Tab") { dispatch({ type: "cancel" }); return; }
       if (aboutOpen || storyOpen || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
@@ -134,7 +120,7 @@ export default function Home() {
       const now = performance.now(), delta = wheelPixels(event.deltaY, event.deltaMode, window.innerHeight);
       if (now - lastWheel > 180 || Math.sign(accumulated) !== Math.sign(delta)) accumulated = 0;
       lastWheel = now;
-      if (now - changedAt < 720) return;
+      if (now - changedAt < 500) return;
       accumulated += delta;
       if (Math.abs(accumulated) >= 45) { step(Math.sign(accumulated)); accumulated = 0; changedAt = now; }
     };
