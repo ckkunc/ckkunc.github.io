@@ -1,6 +1,19 @@
 Portfolio asset provenance
 ==========================
 
+Observatory redesign
+-------------------
+
+- The black hole, stars, telescope, hills, and grass are procedural character art in `src/lib/observatory.ts`. No image or video is loaded for the scene. Native scrolling controls the pullback; slow orbital flow and occasional travelling gusts animate the scene. Reduced motion shows a still landscape and name.
+- `public/fonts/OpenAISans-Regular.woff2`: OpenAI Sans Regular, retrieved from OpenAI's official font CDN at https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2. Typeface reference: https://openai.com/brand/.
+- `public/og.png`: a 1200 × 630 render of the actual opening character art with the site's name in OpenAI Sans.
+- `public/favicon.svg`: a small, original vector black-hole mark.
+
+Build with `pnpm --filter @workspace/personal-site build`, type-check with `pnpm --filter @workspace/personal-site typecheck`, and run the scroll/reduced-motion/wind checks with `node --test artifacts/personal-site/src/lib/observatory.test.ts` from the repository root. Native macOS build packages are available alongside the existing Linux CI packages.
+
+Archived cassette assets
+-----------------------
+
 - `public/images/story-cassette-player.png`: imagegen edit of the photograph supplied by Christopher Kim. Blue and silver body, orange headphones, and original composition preserved; the visible branding reads STORY and the glass is emptied for the interactive cassette. The application clips the photograph to the product silhouette.
 - `public/images/cassette.png`: imagegen-created photographic cassette with a blank cream paper label. A CSS color blend recolors only the exposed middle stripe to each company's color, preserving the paper, housing, and photographic texture. Live HTML centers the company name above the reels and a smaller monochrome logo in the lower cream label; the hubs rotate and the entire cassette changes on navigation.
 - `public/images/databricks-logo.svg`: Simple Icons / react-icons, SiDatabricks.

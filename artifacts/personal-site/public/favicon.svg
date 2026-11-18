@@ -1,12 +1,1 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="180" height="180" rx="36" fill="#F0EBE1"/>
-  <text
-    x="90"
-    y="122"
-    text-anchor="middle"
-    font-family="Georgia, 'Times New Roman', serif"
-    font-size="78"
-    font-weight="bold"
-    fill="#2C2415"
-  >CK</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#080909"/><ellipse cx="24" cy="24" rx="12" ry="14" fill="none" stroke="#e8a369" stroke-width="2"/><path d="M5 27 43 23" stroke="#ffbd78" stroke-width="3"/><path d="M11 18a14 14 0 0 1 24-2" fill="none" stroke="#c75c32" stroke-width="2" opacity=".7"/></svg>

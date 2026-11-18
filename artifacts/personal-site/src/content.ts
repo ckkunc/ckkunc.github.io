@@ -9,7 +9,7 @@ export type PortfolioTrack = {
   tags: string[];
 };
 
-export const name = "Christopher Kim";
+export const name = "Chris Kim";
 
 export const about = [
   "Computer Science at the University of North Carolina at Chapel Hill",
