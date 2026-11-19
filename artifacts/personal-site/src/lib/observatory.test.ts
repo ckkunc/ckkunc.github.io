@@ -29,7 +29,7 @@ test("the whole pullback is continuous and monotonic", () => {
 test("reduced motion shows the landscape and name without a scroll animation", () => {
   const still = observatoryFrame(0, true);
   assert.equal(still.pullback, 1); assert.equal(still.landscape, 1);
-  assert.equal(still.titleOpacity, 1); assert.equal(still.hintOpacity, 0);
+  assert.equal(still.titleOpacity, 1);
   assert.deepEqual(observatoryFrame(1, true), still);
 });
 test("grass has calm intervals and a gust travels across the hill", () => {

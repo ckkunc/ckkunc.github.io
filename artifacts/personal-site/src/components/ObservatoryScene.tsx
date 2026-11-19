@@ -42,7 +42,6 @@ export default function ObservatoryScene() {
       const frame = observatoryFrame(progress, reducedMotion);
       section.style.setProperty("--title-opacity", String(frame.titleOpacity));
       section.style.setProperty("--title-shift", `${-24 * (1 - frame.titleOpacity)}px`);
-      section.style.setProperty("--hint-opacity", String(frame.hintOpacity));
       render();
     };
     const resize = () => {
@@ -84,7 +83,6 @@ export default function ObservatoryScene() {
        ':xXXx:'`}</pre>}
       <div className="hero-title"><h1>{name}</h1></div>
       <p className="sr-only">An orange black hole made of text characters. Scrolling pulls the view back into a starry sky, revealing a telescope beside you on a hill.</p>
-      <span className="scroll-cue" aria-hidden="true" />
     </div>
   </section>;
 }

@@ -23,7 +23,6 @@ export function observatoryFrame(progress: number, reducedMotion = false) {
     landscape: reducedMotion ? 1 : ease(0.26, 0.96, p),
     stars: reducedMotion ? 1 : ease(0.05, 0.74, p),
     titleOpacity: reducedMotion ? 1 : 1 - ease(0.12, 0.43, p),
-    hintOpacity: reducedMotion ? 0 : 1 - ease(0.03, 0.21, p),
   };
 }
 
