@@ -76,7 +76,7 @@ export default function ObservatoryScene() {
 
   return <section ref={sectionRef} className="observatory" data-reduced-motion={reducedMotion} aria-label="A little perspective">
     <div className="observatory-stage">
-      <canvas ref={canvasRef} className="observatory-canvas" aria-hidden="true" />
+      <canvas ref={canvasRef} className="observatory-canvas" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} aria-hidden="true" />
       {unavailable && <pre className="observatory-fallback" aria-hidden="true">{`       .:xXXx:.
      .xX:    :Xx.
   .:xXXXXxxxxXXXXx:.

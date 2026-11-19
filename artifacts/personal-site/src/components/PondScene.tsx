@@ -59,5 +59,5 @@ export default function PondScene() {
       window.removeEventListener("pointerdown", onPointer);
     };
   }, []);
-  return <canvas ref={canvasRef} className="pond-canvas" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="pond-canvas" style={{ position: "fixed", inset: 0, width: "100%", height: "100%" }} aria-hidden="true" />;
 }
