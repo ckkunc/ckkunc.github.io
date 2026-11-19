@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { grassWind, observatoryFrame, observatoryProgress } from "./observatory.ts";
+import { grassWind, observatoryFrame, observatoryHill, observatoryProgress, valleyLakeDepth } from "./observatory.ts";
 
 test("sticky travel uses actual viewport dimensions and clamps overscroll", () => {
   assert.equal(observatoryProgress(100, 1680, 800), 0);
@@ -39,4 +39,14 @@ test("grass has calm intervals and a gust travels across the hill", () => {
   assert.ok(grassWind(16, 1) > 0.6);
   for (const x of [0, 0.5, 1]) assert.equal(grassWind(25, x), 0);
   for (let t = 0; t < 56; t += 0.25) assert.ok(grassWind(t, 0.5) >= 0 && grassWind(t, 0.5) <= 1);
+});
+test("the lake stays in the left valley and leaves the telescope side untouched", () => {
+  assert.ok(valleyLakeDepth(0.28, 0.797) > 0.9);
+  assert.ok(valleyLakeDepth(0.47, 0.797) > 0);
+  assert.ok(valleyLakeDepth(0.77, 0.797) < 0);
+  assert.ok(valleyLakeDepth(0.28, 0.5) < 0);
+  for (const x of [0.73, 0.77, 0.85, 1]) {
+    const original = 0.94 - 0.15 * Math.exp(-Math.pow((x - 0.75) / 0.34, 2)) + 0.02 * Math.sin(x * 8);
+    assert.equal(observatoryHill(x), original);
+  }
 });

@@ -34,6 +34,21 @@ export function grassWind(seconds: number, position: number) {
   return envelope * (0.82 + 0.18 * Math.sin(seconds * 0.72 - position * 3));
 }
 
+/** The foreground rises into a sharper peak on its left shoulder; the telescope side stays put. */
+export function observatoryHill(x: number) {
+  const original = 0.94 - 0.15 * Math.exp(-Math.pow((x - 0.75) / 0.34, 2)) + 0.02 * Math.sin(x * 8);
+  if (x >= 0.73) return original;
+  return original - 0.043 * gaussian(x - 0.635, 0.0035) * (1 - ease(0.66, 0.73, x));
+}
+
+/** Positive inside the irregular, perspective-compressed lake on the left of the valley. */
+export function valleyLakeDepth(x: number, y: number) {
+  const u = (x - 0.28) / 0.265;
+  const center = 0.797 + Math.sin(u * 4.3) * 0.007 + Math.sin(u * 11) * 0.002;
+  const v = (y - center) / 0.063;
+  return 1 - u * u - v * v;
+}
+
 type Point = { x: number; y: number };
 type Sample = Point & { seed: number };
 type Line = { from: Point; to: Point; width: number };
@@ -95,6 +110,21 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
     const cx = mix(width * 0.56, width * 0.47, frame.pullback);
     const cy = mix(height * 0.43, height * 0.24, frame.pullback);
     const radius = mix(Math.min(width * 0.255, height * 0.285), Math.min(width * 0.047, height * 0.059), frame.pullback);
+    const holeLight = (screenX: number, screenY: number, seed: number) => {
+      const bx = screenX * turnCos + screenY * turnSin;
+      const by = (-screenX * turnSin + screenY * turnCos) / depth;
+      if (Math.abs(bx) > 2.7 || Math.abs(by) > 1.6) return 0;
+      const r = Math.hypot(bx, by), angle = Math.atan2(by, bx);
+      const orbitAngle = angle - revolution;
+      const flow = 0.67 + 0.2 * Math.sin(orbitAngle * 13 + r * 29) + 0.13 * Math.sin(orbitAngle * 7 - r * 17);
+      let light = (gaussian(r - 1.015, 0.004) * 0.93 + gaussian(r - 1.13, 0.052) * 0.58 * flow) * Math.max(0.15, 1.12 - bx * 0.63);
+      const band = by - 0.17 - bx * 0.09;
+      const disk = gaussian(band, 0.009 + 0.008 * Math.abs(bx)) * gaussian(bx + 0.1, 2.1) * (0.92 - bx * 0.27);
+      light += disk;
+      if (r < 0.88 && by < 0.08) light *= 0.015;
+      if (r < 0.88 && by >= 0.08) light = disk * 0.72;
+      return light * (0.66 + seed * 0.48);
+    };
     ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.fillStyle = "#080909";
     ctx.fillRect(0, 0, width, height);
     for (let i = 0; i < stars.length; i++) {
@@ -108,9 +138,14 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
       ctx.fillText(star.shape > 0.965 ? "+" : star.shape > 0.88 ? "*" : ".", x, y);
     }
     const lift = (1 - frame.landscape) * height * 0.4;
-    const farHorizon = (x: number) => height * (0.66 + 0.022 * Math.sin(x * 21) + 0.014 * Math.cos(x * 39)) + lift;
-    const middleHorizon = (x: number) => height * (0.76 + 0.035 * Math.sin(x * 9 + 1) + 0.012 * Math.sin(x * 27)) + lift;
-    const hill = (x: number) => height * (0.94 - 0.15 * Math.exp(-Math.pow((x - 0.75) / 0.34, 2)) + 0.02 * Math.sin(x * 8)) + lift;
+    const farHorizon = (x: number) => height * (0.66 + 0.022 * Math.sin(x * 21) + 0.014 * Math.cos(x * 39)
+      + (1 - ease(0.48, 0.6, x)) * (-0.065 * gaussian(x - 0.06, 0.012) + 0.025 * gaussian(x - 0.3, 0.018))) + lift;
+    const middleHorizon = (x: number) => {
+      const original = 0.76 + 0.035 * Math.sin(x * 9 + 1) + 0.012 * Math.sin(x * 27);
+      const valley = 0.685 + 0.14 * gaussian(x - 0.28, 0.031) + 0.008 * Math.sin(x * 36);
+      return height * mix(valley, original, ease(0.48, 0.6, x)) + lift;
+    };
+    const hill = (x: number) => height * observatoryHill(x) + lift;
     if (frame.landscape > 0) {
       for (const { x, y, seed } of samples) {
         const nx = x / width, far = farHorizon(nx), middle = middleHorizon(nx), near = hill(nx);
@@ -128,22 +163,36 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
           ctx.fillText(edge < cellHeight * 1.6 ? (seed > 0.6 ? '"' : "^") : seed > 0.47 ? ";" : seed > 0.25 ? "," : ".", x, y);
         }
       }
+      // Horizontal water marks and a broken, inverted reflection sit down inside the valley.
+      for (const { x, y, seed } of samples) {
+        const nx = x / width, ny = (y - lift) / height;
+        if (nx > 0.56 || ny < 0.72 || ny > 0.88) continue;
+        const lake = valleyLakeDepth(nx, ny);
+        if (lake < -0.045 || y >= hill(nx)) continue;
+        if (lake < 0.06) {
+          ctx.fillStyle = "#4d6862"; ctx.globalAlpha = frame.landscape * (0.25 + seed * 0.15);
+          ctx.fillText(seed > 0.55 ? ":" : ".", x, y);
+          continue;
+        }
+        const current = Math.sin(y * 0.65 + Math.sin(x * 0.018) * 1.2 + time * 0.42);
+        ctx.fillStyle = current > 0.6 ? "#567777" : "#2b484d";
+        ctx.globalAlpha = frame.landscape * (0.18 + Math.max(0, current) * 0.21 + seed * 0.06);
+        ctx.fillText(current > 0.5 ? "~" : seed > 0.65 ? "-" : ".", x, y);
+        const distortion = Math.sin(y * 0.8 + time * 0.55) * width * 0.0026 + Math.sin(y * 0.19 - time * 0.2) * width * 0.001;
+        const reflected = holeLight((x - cx + distortion) / (radius * 0.91), -(y - lift - height * 0.797) / (radius * 0.52), seed);
+        if (reflected > 0.09) {
+          const power = Math.min(reflected, 1.3);
+          ctx.fillStyle = colors[Math.min(127, Math.floor((power / 1.3) * 127))];
+          ctx.globalAlpha = frame.landscape * Math.min(0.8, power * 0.72 + 0.14) * (0.7 + (current + 1) * 0.15);
+          ctx.fillText(current > 0.3 ? "~" : ramp[Math.min(ramp.length - 1, Math.floor(power * 8))], x, y);
+        } else if (seed > 0.985) {
+          ctx.fillStyle = "#a5b8b1"; ctx.globalAlpha = frame.landscape * 0.24; ctx.fillText(".", x, y);
+        }
+      }
     }
     for (const { x, y, seed } of samples) {
       const screenX = (x - cx) / radius, screenY = (y - cy) / (radius * 0.96);
-      const bx = screenX * turnCos + screenY * turnSin;
-      const by = (-screenX * turnSin + screenY * turnCos) / depth;
-      if (Math.abs(bx) > 2.7 || Math.abs(by) > 1.6) continue;
-      const r = Math.hypot(bx, by), angle = Math.atan2(by, bx);
-      const orbitAngle = angle - revolution;
-      const flow = 0.67 + 0.2 * Math.sin(orbitAngle * 13 + r * 29) + 0.13 * Math.sin(orbitAngle * 7 - r * 17);
-      let light = (gaussian(r - 1.015, 0.004) * 0.93 + gaussian(r - 1.13, 0.052) * 0.58 * flow) * Math.max(0.15, 1.12 - bx * 0.63);
-      const band = by - 0.17 - bx * 0.09;
-      const disk = gaussian(band, 0.009 + 0.008 * Math.abs(bx)) * gaussian(bx + 0.1, 2.1) * (0.92 - bx * 0.27);
-      light += disk;
-      if (r < 0.88 && by < 0.08) light *= 0.015;
-      if (r < 0.88 && by >= 0.08) light = disk * 0.72;
-      light *= 0.66 + seed * 0.48;
+      const light = holeLight(screenX, screenY, seed);
       if (light < 0.1) continue;
       const power = Math.min(light, 1.3);
       ctx.fillStyle = colors[Math.min(127, Math.floor((power / 1.3) * 127))];

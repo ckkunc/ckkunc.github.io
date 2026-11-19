@@ -82,7 +82,7 @@ export default function ObservatoryScene() {
      'xX:    :Xx'
        ':xXXx:'`}</pre>}
       <div className="hero-title"><h1>{name}</h1></div>
-      <p className="sr-only">An orange black hole made of text characters. Scrolling pulls the view back into a starry sky, revealing a telescope beside you on a hill.</p>
+      <p className="sr-only">An orange black hole made of text characters. Scrolling pulls the view back to a grassy mountain peak with a telescope on the right. A valley and lake open below on the left, with the black hole reflected in the water.</p>
     </div>
   </section>;
 }

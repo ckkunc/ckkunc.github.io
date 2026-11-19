@@ -5,11 +5,21 @@ Observatory redesign
 -------------------
 
 - The black hole, stars, telescope, hills, and grass are procedural character art in `src/lib/observatory.ts`. No image or video is loaded for the scene. Native scrolling controls the pullback; slow orbital flow and occasional travelling gusts animate the scene. Reduced motion shows a still landscape and name.
+- The left valley includes a perspective-compressed lake with horizontal currents and a distorted, inverted rendering of the same black hole. The right side retains the original telescope placement and grassy slope.
 - `public/fonts/OpenAISans-Regular.woff2`: OpenAI Sans Regular, retrieved from OpenAI's official font CDN at https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2. Typeface reference: https://openai.com/brand/.
 - `public/og.png`: a 1200 × 630 render of the actual opening character art with the site's name in OpenAI Sans.
 - `public/favicon.svg`: a small, original vector black-hole mark.
 
 Build with `pnpm --filter @workspace/personal-site build`, type-check with `pnpm --filter @workspace/personal-site typecheck`, and run the scroll/reduced-motion/wind checks with `node --test artifacts/personal-site/src/lib/observatory.test.ts` from the repository root. Native macOS build packages are available alongside the existing Linux CI packages.
+
+About page pond
+---------------
+
+- `src/lib/pond.ts` draws the koi, flowing fins, patterned scales, lily pads, currents, ripples, and reflected starlight as characters. The supplied koi illustration informed the composition and markings; the page loads no image or video for its live artwork.
+- Koi travel on broad swimming paths and turn to face their velocity. Their spines, tails, and fins move independently. The phone composition uses two fish; larger screens use three. A still frame respects reduced-motion preferences, and animations stop while the tab is hidden.
+- `public/og-pond.png` is a 1200 × 630 render of the pond for the About page's social preview.
+- `scripts/prepare-pages.mjs` creates `dist/public/about/index.html` after the Vite build, so `/about/` can be opened directly on static hosting. The shared navigation lives in `src/components/SiteNavigation.tsx`.
+- Pond motion and ripple checks: `node --test artifacts/personal-site/src/lib/pond.test.ts`.
 
 Archived cassette assets
 -----------------------
