@@ -170,13 +170,16 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
         const lake = valleyLakeDepth(nx, ny);
         if (lake < -0.045 || y >= hill(nx)) continue;
         if (lake < 0.06) {
-          ctx.fillStyle = "#4d6862"; ctx.globalAlpha = frame.landscape * (0.25 + seed * 0.15);
+          ctx.fillStyle = "#467cab"; ctx.globalAlpha = frame.landscape * (0.38 + seed * 0.18);
           ctx.fillText(seed > 0.55 ? ":" : ".", x, y);
           continue;
         }
         const current = Math.sin(y * 0.65 + Math.sin(x * 0.018) * 1.2 + time * 0.42);
-        ctx.fillStyle = current > 0.6 ? "#567777" : "#2b484d";
-        ctx.globalAlpha = frame.landscape * (0.18 + Math.max(0, current) * 0.21 + seed * 0.06);
+        ctx.fillStyle = "#0b2947";
+        ctx.globalAlpha = frame.landscape * (0.5 + Math.min(lake, 1) * 0.18);
+        ctx.fillRect(x - cellWidth * 0.5, y - cellHeight * 0.5, cellWidth, cellHeight);
+        ctx.fillStyle = current > 0.6 ? "#5ba5df" : "#3177b5";
+        ctx.globalAlpha = frame.landscape * (0.3 + Math.max(0, current) * 0.28 + seed * 0.08);
         ctx.fillText(current > 0.5 ? "~" : seed > 0.65 ? "-" : ".", x, y);
         const distortion = Math.sin(y * 0.8 + time * 0.55) * width * 0.0026 + Math.sin(y * 0.19 - time * 0.2) * width * 0.001;
         const reflected = holeLight((x - cx + distortion) / (radius * 0.91), -(y - lift - height * 0.797) / (radius * 0.52), seed);
@@ -186,7 +189,7 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
           ctx.globalAlpha = frame.landscape * Math.min(0.8, power * 0.72 + 0.14) * (0.7 + (current + 1) * 0.15);
           ctx.fillText(current > 0.3 ? "~" : ramp[Math.min(ramp.length - 1, Math.floor(power * 8))], x, y);
         } else if (seed > 0.985) {
-          ctx.fillStyle = "#a5b8b1"; ctx.globalAlpha = frame.landscape * 0.24; ctx.fillText(".", x, y);
+          ctx.fillStyle = "#b0d5f1"; ctx.globalAlpha = frame.landscape * 0.34; ctx.fillText(".", x, y);
         }
       }
     }
