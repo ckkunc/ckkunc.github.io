@@ -163,7 +163,7 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
           ctx.fillText(edge < cellHeight * 1.6 ? (seed > 0.6 ? '"' : "^") : seed > 0.47 ? ";" : seed > 0.25 ? "," : ".", x, y);
         }
       }
-      // Horizontal water marks and a broken, inverted reflection sit down inside the valley.
+      // A calm blue surface holds an undistorted, inverted reflection of the same black hole.
       for (const { x, y, seed } of samples) {
         const nx = x / width, ny = (y - lift) / height;
         if (nx > 0.56 || ny < 0.72 || ny > 0.88) continue;
@@ -174,20 +174,19 @@ export function createObservatoryRenderer(canvas: HTMLCanvasElement) {
           ctx.fillText(seed > 0.55 ? ":" : ".", x, y);
           continue;
         }
-        const current = Math.sin(y * 0.65 + Math.sin(x * 0.018) * 1.2 + time * 0.42);
         ctx.fillStyle = "#0b2947";
         ctx.globalAlpha = frame.landscape * (0.5 + Math.min(lake, 1) * 0.18);
         ctx.fillRect(x - cellWidth * 0.5, y - cellHeight * 0.5, cellWidth, cellHeight);
-        ctx.fillStyle = current > 0.6 ? "#5ba5df" : "#3177b5";
-        ctx.globalAlpha = frame.landscape * (0.3 + Math.max(0, current) * 0.28 + seed * 0.08);
-        ctx.fillText(current > 0.5 ? "~" : seed > 0.65 ? "-" : ".", x, y);
-        const distortion = Math.sin(y * 0.8 + time * 0.55) * width * 0.0026 + Math.sin(y * 0.19 - time * 0.2) * width * 0.001;
-        const reflected = holeLight((x - cx + distortion) / (radius * 0.91), -(y - lift - height * 0.797) / (radius * 0.52), seed);
+        if (seed > 0.7) {
+          ctx.fillStyle = "#4a8fc5"; ctx.globalAlpha = frame.landscape * (0.2 + seed * 0.12);
+          ctx.fillText(".", x, y);
+        }
+        const reflected = holeLight((x - cx) / (radius * 0.91), -(y - lift - height * 0.797) / (radius * 0.52), seed);
         if (reflected > 0.09) {
           const power = Math.min(reflected, 1.3);
           ctx.fillStyle = colors[Math.min(127, Math.floor((power / 1.3) * 127))];
-          ctx.globalAlpha = frame.landscape * Math.min(0.8, power * 0.72 + 0.14) * (0.7 + (current + 1) * 0.15);
-          ctx.fillText(current > 0.3 ? "~" : ramp[Math.min(ramp.length - 1, Math.floor(power * 8))], x, y);
+          ctx.globalAlpha = frame.landscape * Math.min(0.8, power * 0.72 + 0.14);
+          ctx.fillText(ramp[Math.min(ramp.length - 1, Math.floor(power * 8))], x, y);
         } else if (seed > 0.985) {
           ctx.fillStyle = "#b0d5f1"; ctx.globalAlpha = frame.landscape * 0.34; ctx.fillText(".", x, y);
         }

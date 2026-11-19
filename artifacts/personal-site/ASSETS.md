@@ -5,7 +5,7 @@ Observatory redesign
 -------------------
 
 - The black hole, stars, telescope, hills, and grass are procedural character art in `src/lib/observatory.ts`. No image or video is loaded for the scene. Native scrolling controls the pullback; slow orbital flow and occasional travelling gusts animate the scene. Reduced motion shows a still landscape and name.
-- The left valley includes a perspective-compressed lake with horizontal currents and a distorted, inverted rendering of the same black hole. The right side retains the original telescope placement and grassy slope.
+- The left valley includes a calm blue lake with an inverted rendering of the same black hole. The right side retains the original telescope placement and grassy slope. The home scene occupies the space below the shared navigation, including during its sticky scroll reveal.
 - `public/fonts/OpenAISans-Regular.woff2`: OpenAI Sans Regular, retrieved from OpenAI's official font CDN at https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2. Typeface reference: https://openai.com/brand/.
 - `public/og.png`: a 1200 × 630 render of the actual opening character art with the site's name in OpenAI Sans.
 - `public/favicon.svg`: a small, original vector black-hole mark.

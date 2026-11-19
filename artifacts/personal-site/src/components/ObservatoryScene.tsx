@@ -38,7 +38,8 @@ export default function ObservatoryScene() {
     };
     const measure = () => {
       const rect = section.getBoundingClientRect();
-      progress = observatoryProgress(rect.top, rect.height, canvas.getBoundingClientRect().height);
+      const viewport = canvas.getBoundingClientRect();
+      progress = observatoryProgress(rect.top - viewport.top, rect.height, viewport.height);
       const frame = observatoryFrame(progress, reducedMotion);
       section.style.setProperty("--title-opacity", String(frame.titleOpacity));
       section.style.setProperty("--title-shift", `${-24 * (1 - frame.titleOpacity)}px`);
